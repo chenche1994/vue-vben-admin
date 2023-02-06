@@ -5,10 +5,10 @@ export function getBasicColumns(): BasicColumn[] {
       title: '表单名称',
       dataIndex: 'name',
       width: 150,
-      filters: [
-        { text: 'Male', value: 'male' },
-        { text: 'Female', value: 'female' },
-      ],
+      // filters: [
+      //   { text: 'Male', value: 'male' },
+      //   { text: 'Female', value: 'female' },
+      // ],
     },
     {
       title: '表单key',

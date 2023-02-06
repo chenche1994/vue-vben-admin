@@ -12,7 +12,7 @@ const designForm: AppRouteModule = {
     hideChildrenInMenu: true,
     icon: 'simple-icons:about-dot-me',
     title: '表单设计',
-    orderNo: 100000,
+    orderNo: 1000,
   },
   children: [
     {

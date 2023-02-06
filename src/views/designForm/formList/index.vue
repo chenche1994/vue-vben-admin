@@ -4,21 +4,25 @@
       <template #toolbar>
         <a-button type="primary"> 新增 </a-button>
       </template>
-      <template #action>
-        <a-button @click="openDesignModal"> 设计 </a-button>
-        <a-button> 预览 </a-button>
-        <a-button> 删除 </a-button>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'action'">
+          <TableAction
+            :actions="getTableAction(record)"
+            :dropDownActions="getDropDownAction(record)"
+          />
+        </template>
       </template>
     </BasicTable>
     <DesignModel @register="registerDesignModal" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { BasicTable, useTable } from '/@/components/Table'
+  import { BasicTable, useTable, TableAction, ActionItem } from '/@/components/Table'
   import { getBasicColumns } from './formlist.data'
   import { demoListApi } from '/@/api/demo/table'
   import { useModal } from '/@/components/Modal'
   import DesignModel from '../components/designModel.vue'
+  // 注册表格
   const [registerTable] = useTable({
     title: '',
     api: demoListApi,
@@ -28,8 +32,37 @@
       width: 250,
       title: '操作',
       dataIndex: 'action',
-      slots: { customRender: 'action' },
     },
   })
+  // 注册表单设计器弹窗
   const [registerDesignModal, { openModal: openDesignModal }] = useModal()
+
+  /**
+   * 操作栏
+   */
+  function getTableAction(record): ActionItem[] {
+    return [
+      {
+        label: '设计',
+        onClick: openDesignModal.bind(null, record),
+      },
+      {
+        label: '预览',
+        // onClick: registerDesignModal.bind(null, record),
+      },
+    ]
+  }
+
+  function getDropDownAction(record): ActionItem[] {
+    return [
+      {
+        label: '分配处理人/组',
+        onClick: registerDesignModal.bind(null, record),
+      },
+      {
+        label: '分配流程节点',
+        onClick: registerDesignModal.bind(null, record),
+      },
+    ]
+  }
 </script>
