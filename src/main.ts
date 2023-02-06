@@ -16,6 +16,9 @@ import { registerGlobComp } from '/@/components/registerGlobComp'
 
 import { isDevMode } from './utils/env'
 
+import ElementPlus from 'element-plus'
+
+import 'element-plus/theme-chalk/index.css'
 if (isDevMode()) {
   import('ant-design-vue/es/style')
 }
@@ -23,6 +26,7 @@ if (isDevMode()) {
 async function bootstrap() {
   const app = createApp(App)
 
+  app.use(ElementPlus)
   // Configure store
   // 配置 store
   setupStore(app)
