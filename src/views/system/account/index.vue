@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper dense contentFullHeight fixedHeight contentClass="flex">
+  <PageWrapper dense contentFullHeight contentClass="flex">
     <DeptTree class="m-4 mr-0 w-1/4 xl:w-1/5" />
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5">
       <template #toolbar>
@@ -75,4 +75,7 @@
   }
   // 删除
   function handleDelete() {}
+
+  // 新增账号
+  function handleCreate() {}
 </script>

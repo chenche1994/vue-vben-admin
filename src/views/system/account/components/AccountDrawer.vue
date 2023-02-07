@@ -1,5 +1,5 @@
 <template>
-  <BasicDrawer v-bind="$attrs" @register="register" title="用户编辑" width="50%" @ok="handleSubmit">
+  <BasicDrawer v-bind="$attrs" @register="register" title="用户编辑" @ok="handleSubmit" showFooter>
     <BasicForm @register="registerForm" />
   </BasicDrawer>
 </template>

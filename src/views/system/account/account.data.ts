@@ -1,5 +1,6 @@
 import { BasicColumn } from '/@/components/Table/src/types/table'
 import { FormSchema } from '/@/components/Form'
+import { getDeptList } from '/@/api/demo/system'
 
 // 表格页
 export const columns: BasicColumn[] = [
@@ -48,11 +49,71 @@ export const searchFormSchema: FormSchema[] = [
 
 export const accountFormSchema: FormSchema[] = [
   {
-    field: 'account',
+    field: 'jobNumber',
     label: '工号',
     component: 'Input',
     componentProps: {
       disabled: true,
     },
+  },
+  {
+    field: 'realName',
+    label: '姓名',
+    component: 'Input',
+  },
+  {
+    field: 'deptId',
+    label: '所属部门',
+    component: 'ApiCascader',
+    componentProps: {
+      api: getDeptList,
+      labelField: 'deptName',
+      valueField: 'id',
+    },
+  },
+  {
+    field: 'postId',
+    label: '职务',
+    component: 'Select',
+  },
+  {
+    field: 'createAccount',
+    label: '是否自动创建账号',
+    component: 'Switch',
+  },
+  {
+    field: 'isOuter',
+    label: '是否委外',
+    component: 'Switch',
+  },
+  {
+    field: 'hireDate',
+    label: '入职时间',
+    component: 'DatePicker',
+  },
+  {
+    field: 'mobile',
+    label: '联系电话',
+    component: 'Input',
+  },
+  {
+    field: 'email',
+    label: '邮箱',
+    component: 'Input',
+  },
+  {
+    field: 'birthday',
+    label: '生日',
+    component: 'DatePicker',
+  },
+  {
+    field: 'gender',
+    label: '性别',
+    component: 'Select',
+  },
+  {
+    field: 'address',
+    label: '详细地址',
+    component: 'InputTextArea',
   },
 ]
