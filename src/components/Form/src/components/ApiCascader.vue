@@ -2,7 +2,7 @@
   <a-cascader
     v-model:value="state"
     :options="options"
-    :load-data="loadData"
+    :load-data="isRemoteChildren ? loadData : null"
     change-on-select
     @change="handleChange"
     :displayRender="handleRenderDisplay"
@@ -67,6 +67,10 @@
       },
       displayRenderArray: {
         type: Array,
+      },
+      isRemoteChildren: {
+        type: Boolean,
+        default: false,
       },
     },
     emits: ['change', 'defaultChange'],

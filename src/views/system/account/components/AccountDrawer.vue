@@ -12,7 +12,7 @@
   // 注册抽屉
   const [register, { closeDrawer }] = useDrawer()
   // 注册表单
-  const [registerForm] = useForm({
+  const [registerForm, { getFieldsValue, validate }] = useForm({
     labelWidth: 100,
     baseColProps: { span: 24 },
     schemas: accountFormSchema,
@@ -22,7 +22,9 @@
     },
   })
   // 提交
-  function handleSubmit() {
+  async function handleSubmit() {
+    const vali = validate()
+    console.log(vali, getFieldsValue())
     closeDrawer() // 关闭表单
     emit('success')
   }

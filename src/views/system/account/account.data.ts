@@ -60,6 +60,7 @@ export const accountFormSchema: FormSchema[] = [
     field: 'realName',
     label: '姓名',
     component: 'Input',
+    required: true,
   },
   {
     field: 'deptId',
@@ -69,17 +70,26 @@ export const accountFormSchema: FormSchema[] = [
       api: getDeptList,
       labelField: 'deptName',
       valueField: 'id',
+      isLeaf: (item) => {
+        return !item.children
+      },
     },
+    required: true,
   },
   {
     field: 'postId',
     label: '职务',
     component: 'Select',
+    required: true,
   },
   {
     field: 'createAccount',
     label: '是否自动创建账号',
     component: 'Switch',
+    componentProps: {
+      checkedValue: 'Y',
+      unCheckedValue: 'N',
+    },
   },
   {
     field: 'isOuter',

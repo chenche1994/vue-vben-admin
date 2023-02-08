@@ -37,6 +37,20 @@ export const LoginRoute: AppRouteRecordRaw = {
   },
 }
 
+export const Oauth2LoginRoute: AppRouteRecordRaw = {
+  path: '/oauth2-app/login',
+  name: 'oauth2-app-login',
+  component: () => import('/@/views/sys/login/OAuth2Login.vue'),
+  meta: {
+    title: 'auth登录',
+  },
+}
 // Basic routing without permission
 // 未经许可的基本路由
-export const basicRoutes = [LoginRoute, RootRoute, REDIRECT_ROUTE, PAGE_NOT_FOUND_ROUTE]
+export const basicRoutes = [
+  LoginRoute,
+  RootRoute,
+  REDIRECT_ROUTE,
+  PAGE_NOT_FOUND_ROUTE,
+  Oauth2LoginRoute,
+]

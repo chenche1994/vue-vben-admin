@@ -21,7 +21,6 @@ import { AxiosRetry } from '/@/utils/http/axios/axiosRetry'
 const globSetting = useGlobSetting()
 const urlPrefix = globSetting.urlPrefix
 const { createMessage, createErrorModal } = useMessage()
-
 /**
  * @description: 数据处理，方便区分多种处理方式
  */
@@ -49,7 +48,7 @@ const transform: AxiosTransform = {
       throw new Error(t('sys.api.apiRequestFailed'))
     }
     //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
-    const { code, result, message } = data
+    const { code, data: result, message } = data
 
     // 这里逻辑可以根据项目进行修改
     const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS
@@ -204,6 +203,9 @@ const transform: AxiosTransform = {
 }
 
 function createAxios(opt?: Partial<CreateAxiosOptions>) {
+  const token = getToken()
+  console.log(token)
+
   return new VAxios(
     // 深度合并
     deepMerge(
@@ -211,7 +213,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
         // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#authentication_schemes
         // authentication schemes，e.g: Bearer
         // authenticationScheme: 'Bearer',
-        authenticationScheme: '',
+        authenticationScheme: 'Bearer',
         timeout: 10 * 1000,
         // 基础接口地址
         // baseURL: globSetting.apiUrl,
@@ -259,9 +261,9 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
 export const defHttp = createAxios()
 
 // other api url
-// export const otherHttp = createAxios({
-//   requestOptions: {
-//     apiUrl: 'xxx',
-//     urlPrefix: 'xxx',
-//   },
-// });
+export const otherHttp = createAxios({
+  requestOptions: {
+    apiUrl: '/auth-api',
+    isTransformResponse: false,
+  },
+})

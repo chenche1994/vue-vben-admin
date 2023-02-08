@@ -116,3 +116,22 @@ function createRule(message: string) {
     },
   ]
 }
+
+/**
+ * 判断是否是OAuth2APP环境
+ */
+export function isOAuth2AppEnv() {
+  return true // /wxwork|dingtalk/i.test(navigator.userAgent)
+}
+
+/**
+ * 后台构造oauth2登录地址
+ * @param source
+ */
+export function sysOAuth2Login(source) {
+  const url =
+    'http://172.19.3.47:8080/oauth/authorize?client_id=tpm&response_type=code&redirect_uri=https://localhost:3100/#/'
+  // url += `?state=${encodeURIComponent(window.location.origin)}`
+  window.location.href = url
+  console.log(source)
+}

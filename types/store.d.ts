@@ -38,3 +38,9 @@ export interface BeforeMiniState {
   menuMode?: MenuModeEnum
   menuType?: MenuTypeEnum
 }
+
+export interface LoginInfo {
+  userInfo?: object
+  departs?: []
+  isLogin?: boolean
+}

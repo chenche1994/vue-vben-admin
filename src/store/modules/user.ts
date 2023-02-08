@@ -1,13 +1,13 @@
-import type { UserInfo } from '/#/store'
+import type { UserInfo, LoginInfo } from '/#/store'
 import type { ErrorMessageMode } from '/#/axios'
 import { defineStore } from 'pinia'
 import { store } from '/@/store'
 import { RoleEnum } from '/@/enums/roleEnum'
 import { PageEnum } from '/@/enums/pageEnum'
-import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum'
+import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY, LOGIN_INFO_KEY } from '/@/enums/cacheEnum'
 import { getAuthCache, setAuthCache } from '/@/utils/auth'
 import { GetUserInfoModel, LoginParams } from '/@/api/sys/model/userModel'
-import { doLogout, getUserInfo, loginApi } from '/@/api/sys/user'
+import { doLogout, getUserInfo, loginApi, thirdLogin } from '/@/api/sys/user'
 import { useI18n } from '/@/hooks/web/useI18n'
 import { useMessage } from '/@/hooks/web/useMessage'
 import { router } from '/@/router'
@@ -23,6 +23,7 @@ interface UserState {
   roleList: RoleEnum[]
   sessionTimeout?: boolean
   lastUpdateTime: number
+  loginInfo?: Nullable<LoginInfo>
 }
 
 export const useUserStore = defineStore({
@@ -38,6 +39,8 @@ export const useUserStore = defineStore({
     sessionTimeout: false,
     // Last fetch time
     lastUpdateTime: 0,
+    //登录返回信息
+    loginInfo: null,
   }),
   getters: {
     getUserInfo(): UserInfo {
@@ -70,6 +73,10 @@ export const useUserStore = defineStore({
       this.lastUpdateTime = new Date().getTime()
       setAuthCache(USER_INFO_KEY, info)
     },
+    setLoginInfo(info: LoginInfo | null) {
+      this.loginInfo = info
+      setAuthCache(LOGIN_INFO_KEY, info)
+    },
     setSessionTimeout(flag: boolean) {
       this.sessionTimeout = flag
     },
@@ -100,11 +107,10 @@ export const useUserStore = defineStore({
         return Promise.reject(error)
       }
     },
-    async afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
+    async afterLoginAction(goHome?: boolean, data?: any): Promise<GetUserInfoModel | null> {
       if (!this.getToken) return null
-      // get user info
+      //获取用户信息
       const userInfo = await this.getUserInfoAction()
-
       const sessionTimeout = this.sessionTimeout
       if (sessionTimeout) {
         this.setSessionTimeout(false)
@@ -118,9 +124,10 @@ export const useUserStore = defineStore({
           router.addRoute(PAGE_NOT_FOUND_ROUTE as unknown as RouteRecordRaw)
           permissionStore.setDynamicAddedRoute(true)
         }
-        goHome && (await router.replace(userInfo?.homePath || PageEnum.BASE_HOME))
+        await this.setLoginInfo({ ...data, isLogin: true })
+        goHome && (await router.replace((userInfo && userInfo.homePath) || PageEnum.BASE_HOME))
       }
-      return userInfo
+      return data
     },
     async getUserInfoAction(): Promise<UserInfo | null> {
       if (!this.getToken) return null
@@ -167,6 +174,23 @@ export const useUserStore = defineStore({
           await this.logout(true)
         },
       })
+    },
+    /**
+     * 登录事件
+     */
+    async ThirdLogin(params): Promise<any | null> {
+      try {
+        const { goHome = true, mode, ...ThirdLoginParams } = params
+        const data = await thirdLogin(ThirdLoginParams, mode)
+        const { access_token: token, refresh_token } = data
+        // save token
+        this.setToken(token)
+        console.log(refresh_token)
+
+        return this.afterLoginAction(goHome, data)
+      } catch (error) {
+        return Promise.reject(error)
+      }
     },
   },
 })
