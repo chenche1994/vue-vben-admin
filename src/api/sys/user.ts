@@ -1,6 +1,12 @@
 import { defHttp, otherHttp } from '/@/utils/http/axios'
-import { LoginParams, LoginResultModel, GetUserInfoModel } from './model/userModel'
+import {
+  LoginParams,
+  SearchUserParams,
+  LoginResultModel,
+  GetUserInfoModel,
+} from './model/userModel'
 
+import { useApiDelete } from '/@/hooks/component/useApiConfirm'
 import { ErrorMessageMode } from '/#/axios'
 
 enum Api {
@@ -10,6 +16,7 @@ enum Api {
   GetPermCode = '/getPermCode',
   TestRetry = '/testRetry',
   thirdLogin = '/sys/thirdLogin/getLoginUser',
+  GetUserList = '/user/list',
 }
 
 /**
@@ -55,6 +62,9 @@ export function testRetry() {
   )
 }
 
+export function apiGetUserList(params: SearchUserParams) {
+  return defHttp.post({ url: Api.GetUserList, params })
+}
 /**
  * @description: 第三方登录
  */
@@ -67,4 +77,22 @@ export function thirdLogin(params, mode: ErrorMessageMode = 'modal') {
       errorMessageMode: mode,
     },
   )
+}
+
+/**
+ * 保存或者更新
+ */
+export const saveOrUpdateUser = (params, isUpdate) => {
+  if (isUpdate) {
+    return defHttp.post({ url: '/user/update', params })
+  } else {
+    return defHttp.post({ url: '/user/create', params })
+  }
+}
+
+/**
+ * 删除
+ */
+export const apiDelUser = (params, confirm = true) => {
+  return useApiDelete(defHttp.post({ url: '/user/delete', params }), confirm)
 }

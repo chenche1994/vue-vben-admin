@@ -10,11 +10,6 @@
           <TableAction
             :actions="[
               {
-                icon: 'clarity:info-standard-line',
-                tooltip: '详情',
-                onClick: handleView.bind(null, record),
-              },
-              {
                 icon: 'clarity:note-edit-line',
                 tooltip: '编辑',
                 onClick: handleEdit.bind(null, record),
@@ -23,18 +18,14 @@
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
                 tooltip: '删除',
-                popConfirm: {
-                  title: '是否确认删除',
-                  placement: 'left',
-                  confirm: handleDelete.bind(null, record),
-                },
+                onClick: handleDelete.bind(null, record),
               },
             ]"
           />
         </template>
       </template>
     </BasicTable>
-    <AccountDrawer @register="registerAccountDrawer" />
+    <AccountDrawer @register="registerAccountDrawer" @success="handleSuccess" />
   </PageWrapper>
 </template>
 <script setup>
@@ -42,13 +33,13 @@
   import { BasicTable, useTable, TableAction } from '/@/components/Table'
   import DeptTree from './components/deptTree.vue'
   import AccountDrawer from './components/AccountDrawer.vue'
-  import { getAccountList } from '/@/api/demo/system'
+  import { apiGetUserList, apiDelUser } from '/@/api/sys/user'
   import { columns, searchFormSchema } from './account.data'
   import { useDrawer } from '/@/components/Drawer'
   // 注册表格
-  const [registerTable] = useTable({
+  const [registerTable, { reload }] = useTable({
     title: '账号列表',
-    api: getAccountList,
+    api: apiGetUserList,
     columns,
     actionColumn: {
       width: 120,
@@ -65,17 +56,27 @@
     bordered: true,
   })
   const [registerAccountDrawer, { openDrawer }] = useDrawer()
-  // 详情
-  function handleView() {
-    openDrawer(true)
-  }
   // 编辑
-  function handleEdit() {
-    openDrawer(true)
+  function handleEdit(record) {
+    openDrawer(true, {
+      record,
+      isUpdate: true,
+    })
   }
   // 删除
-  function handleDelete() {}
+  async function handleDelete(record) {
+    await apiDelUser({ id: record.id })
+    reload()
+  }
 
   // 新增账号
-  function handleCreate() {}
+  function handleCreate() {
+    openDrawer(true, {
+      isUpdate: false,
+    })
+  }
+  // 刷新表格
+  function handleSuccess() {
+    reload()
+  }
 </script>

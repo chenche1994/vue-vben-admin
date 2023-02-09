@@ -1,32 +1,26 @@
 import { BasicColumn } from '/@/components/Table/src/types/table'
 import { FormSchema } from '/@/components/Form'
-import { getDeptList } from '/@/api/demo/system'
 
 // 表格页
 export const columns: BasicColumn[] = [
   {
-    title: '用户名',
-    dataIndex: 'account1',
+    title: '账号',
+    dataIndex: 'userName',
     width: 120,
   },
   {
-    title: '工号',
-    dataIndex: 'account',
+    title: '昵称',
+    dataIndex: 'userNick',
     width: 120,
   },
   {
-    title: '姓名',
-    dataIndex: 'name',
-    width: 120,
-  },
-  {
-    title: '所属部门',
-    dataIndex: 'org',
+    title: '真实姓名',
+    dataIndex: 'realName',
     width: 120,
   },
   {
     title: '联系电话',
-    dataIndex: 'phone',
+    dataIndex: 'mobile',
     width: 120,
   },
 ]
@@ -34,76 +28,46 @@ export const columns: BasicColumn[] = [
 // 表格搜索参数
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'account',
+    field: 'userNameLike',
     label: '用户名',
     component: 'Input',
-    colProps: { span: 8 },
+    colProps: { span: 6 },
   },
   {
-    field: 'nickname',
+    field: 'userNickLike',
     label: '昵称',
     component: 'Input',
-    colProps: { span: 8 },
+    colProps: { span: 6 },
+  },
+  {
+    field: 'realNameLike',
+    label: '真实姓名',
+    component: 'Input',
+    colProps: { span: 6 },
   },
 ]
 
 export const accountFormSchema: FormSchema[] = [
   {
-    field: 'jobNumber',
-    label: '工号',
+    field: 'userName',
+    label: '用户名',
     component: 'Input',
-    componentProps: {
-      disabled: true,
-    },
+    required: true,
+  },
+  {
+    field: 'password',
+    label: '密码',
+    component: 'InputPassword',
+    required: true,
+  },
+  {
+    field: 'userNick',
+    label: '昵称',
+    component: 'Input',
   },
   {
     field: 'realName',
-    label: '姓名',
-    component: 'Input',
-    required: true,
-  },
-  {
-    field: 'deptId',
-    label: '所属部门',
-    component: 'ApiCascader',
-    componentProps: {
-      api: getDeptList,
-      labelField: 'deptName',
-      valueField: 'id',
-      isLeaf: (item) => {
-        return !item.children
-      },
-    },
-    required: true,
-  },
-  {
-    field: 'postId',
-    label: '职务',
-    component: 'Select',
-    required: true,
-  },
-  {
-    field: 'createAccount',
-    label: '是否自动创建账号',
-    component: 'Switch',
-    componentProps: {
-      checkedValue: 'Y',
-      unCheckedValue: 'N',
-    },
-  },
-  {
-    field: 'isOuter',
-    label: '是否委外',
-    component: 'Switch',
-  },
-  {
-    field: 'hireDate',
-    label: '入职时间',
-    component: 'DatePicker',
-  },
-  {
-    field: 'mobile',
-    label: '联系电话',
+    label: '真实姓名',
     component: 'Input',
   },
   {
@@ -112,18 +76,18 @@ export const accountFormSchema: FormSchema[] = [
     component: 'Input',
   },
   {
-    field: 'birthday',
-    label: '生日',
-    component: 'DatePicker',
+    field: 'mobile',
+    label: '电话',
+    component: 'Input',
   },
   {
-    field: 'gender',
-    label: '性别',
-    component: 'Select',
-  },
-  {
-    field: 'address',
-    label: '详细地址',
+    field: 'profile',
+    label: '简介',
     component: 'InputTextArea',
+  },
+  {
+    field: 'photo',
+    label: '头像',
+    component: 'Upload',
   },
 ]

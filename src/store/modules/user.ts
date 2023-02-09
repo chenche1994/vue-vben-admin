@@ -4,7 +4,13 @@ import { defineStore } from 'pinia'
 import { store } from '/@/store'
 import { RoleEnum } from '/@/enums/roleEnum'
 import { PageEnum } from '/@/enums/pageEnum'
-import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY, LOGIN_INFO_KEY } from '/@/enums/cacheEnum'
+import {
+  ROLES_KEY,
+  TOKEN_KEY,
+  USER_INFO_KEY,
+  LOGIN_INFO_KEY,
+  REFRESH_TOKEN_KEY,
+} from '/@/enums/cacheEnum'
 import { getAuthCache, setAuthCache } from '/@/utils/auth'
 import { GetUserInfoModel, LoginParams } from '/@/api/sys/model/userModel'
 import { doLogout, getUserInfo, loginApi, thirdLogin } from '/@/api/sys/user'
@@ -24,6 +30,7 @@ interface UserState {
   sessionTimeout?: boolean
   lastUpdateTime: number
   loginInfo?: Nullable<LoginInfo>
+  refreshToken?: string
 }
 
 export const useUserStore = defineStore({
@@ -33,6 +40,8 @@ export const useUserStore = defineStore({
     userInfo: null,
     // token
     token: undefined,
+    // refreshToken
+    refreshToken: undefined,
     // roleList
     roleList: [],
     // Whether the login expired
@@ -49,6 +58,9 @@ export const useUserStore = defineStore({
     getToken(): string {
       return this.token || getAuthCache<string>(TOKEN_KEY)
     },
+    getRefreshToken(): string {
+      return this.refreshToken || getAuthCache<string>(REFRESH_TOKEN_KEY)
+    },
     getRoleList(): RoleEnum[] {
       return this.roleList.length > 0 ? this.roleList : getAuthCache<RoleEnum[]>(ROLES_KEY)
     },
@@ -63,6 +75,10 @@ export const useUserStore = defineStore({
     setToken(info: string | undefined) {
       this.token = info ? info : '' // for null or undefined value
       setAuthCache(TOKEN_KEY, info)
+    },
+    setRefreshToken(info: string | undefined) {
+      this.refreshToken = info ? info : '' // for null or undefined value
+      setAuthCache(REFRESH_TOKEN_KEY, info)
     },
     setRoleList(roleList: RoleEnum[]) {
       this.roleList = roleList
@@ -132,12 +148,12 @@ export const useUserStore = defineStore({
     async getUserInfoAction(): Promise<UserInfo | null> {
       if (!this.getToken) return null
       const userInfo = await getUserInfo()
-      const { roles = [] } = userInfo
+      const { roleList: roles = [] } = userInfo
       if (isArray(roles)) {
         const roleList = roles.map((item) => item.value) as RoleEnum[]
         this.setRoleList(roleList)
       } else {
-        userInfo.roles = []
+        userInfo.roleList = []
         this.setRoleList([])
       }
       this.setUserInfo(userInfo)
@@ -185,7 +201,7 @@ export const useUserStore = defineStore({
         const { access_token: token, refresh_token } = data
         // save token
         this.setToken(token)
-        console.log(refresh_token)
+        this.setRefreshToken(refresh_token)
 
         return this.afterLoginAction(goHome, data)
       } catch (error) {

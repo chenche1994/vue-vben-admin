@@ -6,6 +6,17 @@ export interface LoginParams {
   password: string
 }
 
+export interface SearchUserParams {
+  mobileLike?: string
+  pageIndex: number
+  pageSize: number
+  realNameLike?: string
+  roleId?: string | number
+  status?: string
+  userNameLike?: string
+  userNickLike?: string
+}
+
 export interface RoleInfo {
   roleName: string
   value: string
@@ -26,7 +37,7 @@ export interface LoginResultModel {
  * @description: Get user information return value
  */
 export interface GetUserInfoModel {
-  roles: RoleInfo[]
+  roleList: RoleInfo[]
   // 用户id
   userId: string | number
   // 用户名

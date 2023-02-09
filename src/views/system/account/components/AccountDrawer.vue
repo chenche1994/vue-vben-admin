@@ -4,15 +4,30 @@
   </BasicDrawer>
 </template>
 <script setup>
-  import { BasicDrawer, useDrawer } from '/@/components/Drawer'
+  import { ref, unref } from 'vue'
+  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer'
   import { BasicForm, useForm } from '/@/components/Form/index'
   import { accountFormSchema } from '../account.data'
+  import { saveOrUpdateUser } from '/@/api'
   // 声明Emits
   const emit = defineEmits(['success'])
+
+  const isUpdate = ref(true)
   // 注册抽屉
-  const [register, { closeDrawer }] = useDrawer()
+  const [register, { closeDrawer, setDrawerProps }] = useDrawerInner(async (data) => {
+    resetFields()
+    setDrawerProps({ confirmLoading: false })
+    isUpdate.value = !!data?.isUpdate
+    if (unref(isUpdate)) {
+      setFieldsValue({
+        // 设置回显值
+        ...data.record,
+      })
+    }
+  })
+
   // 注册表单
-  const [registerForm, { getFieldsValue, validate }] = useForm({
+  const [registerForm, { validate, setFieldsValue, resetFields }] = useForm({
     labelWidth: 100,
     baseColProps: { span: 24 },
     schemas: accountFormSchema,
@@ -23,9 +38,15 @@
   })
   // 提交
   async function handleSubmit() {
-    const vali = validate()
-    console.log(vali, getFieldsValue())
-    closeDrawer() // 关闭表单
-    emit('success')
+    try {
+      setDrawerProps({ confirmLoading: true })
+      let values = await validate()
+      //提交表单
+      await saveOrUpdateUser(values, isUpdate.value)
+      closeDrawer() // 关闭表单
+      emit('success')
+    } finally {
+      setDrawerProps({ confirmLoading: false })
+    }
   }
 </script>

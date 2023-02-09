@@ -41,14 +41,13 @@ const transform: AxiosTransform = {
       return res.data
     }
     // 错误的时候返回
-
     const { data } = res
     if (!data) {
       // return '[HTTP] Request has no return value';
       throw new Error(t('sys.api.apiRequestFailed'))
     }
     //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
-    const { code, data: result, message } = data
+    const { code, data: result, msg: message } = data
 
     // 这里逻辑可以根据项目进行修改
     const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS
@@ -65,6 +64,9 @@ const transform: AxiosTransform = {
         const userStore = useUserStoreWithOut()
         userStore.setToken(undefined)
         userStore.logout(true)
+        break
+      case ResultEnum.ERROR:
+        timeoutMsg = result
         break
       default:
         if (message) {

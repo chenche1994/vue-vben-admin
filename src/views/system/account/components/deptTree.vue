@@ -7,7 +7,7 @@
       treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
       :clickRowToExpand="false"
       :treeData="treeData"
-      :fieldNames="{ key: 'id', title: 'deptName' }"
+      :fieldNames="{ key: 'id', title: 'name' }"
       @select="handleSelect"
     />
   </div>
@@ -16,7 +16,7 @@
   import { defineComponent, onMounted, ref } from 'vue'
 
   import { BasicTree, TreeItem } from '/@/components/Tree'
-  import { getDeptList } from '/@/api/demo/system'
+  import { apiGetOrgTree } from '/@/api/sys/org'
 
   export default defineComponent({
     name: 'DeptTree',
@@ -27,7 +27,13 @@
       const treeData = ref<TreeItem[]>([])
 
       async function fetch() {
-        treeData.value = (await getDeptList()) as unknown as TreeItem[]
+        const data = (await apiGetOrgTree()) as unknown as TreeItem[]
+        if (Array.isArray(data)) {
+          treeData.value = data
+        } else {
+          treeData.value = [data]
+        }
+        console.log(treeData.value)
       }
 
       function handleSelect(keys) {
