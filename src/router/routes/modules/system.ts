@@ -24,6 +24,15 @@ const system: AppRouteModule = {
       component: () => import('/@/views/system/account/index.vue'),
     },
     {
+      path: 'employee',
+      name: 'EmployeeManagement',
+      meta: {
+        title: t('routes.demo.system.employee'),
+        ignoreKeepAlive: false,
+      },
+      component: () => import('/@/views/system/employee/index.vue'),
+    },
+    {
       path: 'menu',
       name: 'MenuManagement',
       meta: {

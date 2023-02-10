@@ -13,7 +13,10 @@ enum Api {
  * @description: getOrg
  */
 export function apiGetOrgTree(params?: OrgTreeParams) {
-  return defHttp.post({ url: Api.Tree, params })
+  return new Promise(async (resolve) => {
+    const res = await defHttp.post({ url: Api.Tree, params })
+    resolve([res])
+  })
 }
 
 export function apiDelOrg(params: OrgDelParams, confirm = true) {
