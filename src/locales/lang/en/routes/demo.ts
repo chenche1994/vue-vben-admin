@@ -166,6 +166,7 @@ export default {
     role: 'Role management',
     employee: 'employee management',
     specialty: 'specialty management',
+    area: 'area management',
   },
   table: {
     table: 'Table',

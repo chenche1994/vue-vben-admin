@@ -11,6 +11,7 @@
   import { useUserStore } from '/@/store/modules/user'
   import { useMessage } from '/@/hooks/web/useMessage'
   import { useI18n } from '/@/hooks/web/useI18n'
+  // import { getToken } from '/@/utils/auth'
 
   const isOAuth = ref<boolean>(isOAuth2AppEnv())
   const env = ref<any>({ thirdApp: true, wxWork: false, dingtalk: false })
@@ -46,8 +47,9 @@
    */
   function doOAuth2Login() {
     if (env.value.thirdApp) {
+      // const token = getToken()
       // 判断是否携带了code，是就说明登录成功
-      if (route.query.token || location.href.indexOf('code') !== -1) {
+      if (location.href.indexOf('code') !== -1) {
         let codeArr = location.href.split('code=')
         let code = codeArr[1].substring(0, 6)
         //执行登录操作

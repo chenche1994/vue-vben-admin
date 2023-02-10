@@ -59,6 +59,15 @@ const system: AppRouteModule = {
       },
       component: () => import('/@/views/system/specialty/index.vue'),
     },
+    {
+      path: 'area',
+      name: 'AreaManagement',
+      meta: {
+        title: t('routes.demo.system.area'),
+        ignoreKeepAlive: true,
+      },
+      component: () => import('/@/views/system/area/index.vue'),
+    },
   ],
 }
 

@@ -1,10 +1,16 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="register" title="用户编辑" @ok="handleSubmit" showFooter>
+  <BasicModal
+    v-bind="$attrs"
+    @register="register"
+    :title="`专业${title}`"
+    @ok="handleSubmit"
+    showFooter
+  >
     <BasicForm @register="registerForm" />
   </BasicModal>
 </template>
 <script setup>
-  import { ref, unref } from 'vue'
+  import { ref, unref, computed } from 'vue'
   import { BasicModal, useModalInner } from '/@/components/Modal'
   import { BasicForm, useForm } from '/@/components/Form/index'
   import { specialtyFormSchema } from './specialty.data'
@@ -13,6 +19,8 @@
   const emit = defineEmits(['success'])
 
   const isUpdate = ref(true)
+  const title = computed(() => (isUpdate.value ? '编辑' : '新增'))
+  const rowId = ref('')
   // 注册抽屉
   const [register, { closeModel, setModalProps }] = useModalInner(async (data) => {
     resetFields()
@@ -23,6 +31,7 @@
         // 设置回显值
         ...data.record,
       })
+      rowId = data.record.rowId
     }
   })
 
@@ -42,7 +51,7 @@
       setModalProps({ confirmLoading: true })
       let values = await validate()
       //提交表单
-      await saveOrUpdateSpecialty(values, isUpdate.value)
+      await saveOrUpdateSpecialty({ ...values, id: rowId.value }, isUpdate.value)
       closeModel() // 关闭表单
       emit('success')
     } finally {

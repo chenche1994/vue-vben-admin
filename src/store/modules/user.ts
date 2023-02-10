@@ -99,6 +99,7 @@ export const useUserStore = defineStore({
     resetState() {
       this.userInfo = null
       this.token = ''
+      this.refreshToken = ''
       this.roleList = []
       this.sessionTimeout = false
     },
@@ -205,6 +206,7 @@ export const useUserStore = defineStore({
 
         return this.afterLoginAction(goHome, data)
       } catch (error) {
+        this.resetState()
         return Promise.reject(error)
       }
     },

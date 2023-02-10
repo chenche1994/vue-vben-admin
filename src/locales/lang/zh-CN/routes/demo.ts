@@ -159,6 +159,7 @@ export default {
     role: '角色管理',
     employee: '员工管理',
     specialty: '专业管理',
+    area: '区域管理',
   },
   table: {
     table: 'Table',

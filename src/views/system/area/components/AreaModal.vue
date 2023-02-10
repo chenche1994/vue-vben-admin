@@ -1,46 +1,47 @@
 <template>
-  <BasicDrawer
+  <BasicModal
     v-bind="$attrs"
     @register="register"
-    :title="`员工${title}`"
+    :title="`区域${title}`"
     @ok="handleSubmit"
     showFooter
   >
     <BasicForm @register="registerForm" />
-  </BasicDrawer>
+  </BasicModal>
 </template>
 <script setup>
   import { ref, unref, computed } from 'vue'
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer'
+  import { BasicModal, useModalInner } from '/@/components/Modal'
   import { BasicForm, useForm } from '/@/components/Form/index'
-  import { accountFormSchema } from '../employee.data'
-  import { saveOrUpdateEmployee } from '/@/api'
+  import { basicFormSchema } from '../area.data'
+  import { saveOrUpdateArea } from '/@/api'
   // 声明Emits
   const emit = defineEmits(['success'])
 
   const isUpdate = ref(true)
   const title = computed(() => (isUpdate.value ? '编辑' : '新增'))
+
   const rowId = ref('')
-  // 注册抽屉
-  const [register, { closeDrawer, setDrawerProps }] = useDrawerInner(async (data) => {
+
+  // 注册model
+  const [register, { closeModal, setModalProps }] = useModalInner(async (data) => {
     resetFields()
-    setDrawerProps({ confirmLoading: false })
+    setModalProps({ confirmLoading: false })
     isUpdate.value = !!data?.isUpdate
     if (unref(isUpdate)) {
-      rowId.value = data.record.id
-      console.log(rowId.value)
       setFieldsValue({
         // 设置回显值
         ...data.record,
       })
+      rowId.value = data.record.id
     }
   })
 
   // 注册表单
   const [registerForm, { validate, setFieldsValue, resetFields }] = useForm({
-    labelWidth: 120,
+    labelWidth: 100,
     baseColProps: { span: 24 },
-    schemas: accountFormSchema,
+    schemas: basicFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
@@ -49,14 +50,14 @@
   // 提交
   async function handleSubmit() {
     try {
-      setDrawerProps({ confirmLoading: true })
+      setModalProps({ confirmLoading: true })
       let values = await validate()
       //提交表单
-      await saveOrUpdateEmployee({ ...values, id: rowId.value }, isUpdate.value)
-      closeDrawer() // 关闭表单
+      await saveOrUpdateArea({ ...values, id: rowId.value }, isUpdate.value)
+      closeModal() // 关闭表单
       emit('success')
     } finally {
-      setDrawerProps({ confirmLoading: false })
+      setModalProps({ confirmLoading: false })
     }
   }
 </script>

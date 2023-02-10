@@ -1,10 +1,7 @@
 <template>
   <PageWrapper dense contentFullHeight contentClass="flex">
-    <DeptTree class="m-4 mr-0 w-1/4 xl:w-1/5" />
+    <AreaLeftTree class="m-4 mr-0 w-1/4 xl:w-1/5" />
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5">
-      <template #toolbar>
-        <a-button type="primary" @click="handleCreate">新增员工</a-button>
-      </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <TableAction
@@ -25,21 +22,21 @@
         </template>
       </template>
     </BasicTable>
-    <EmployeeDrawer @register="registerAccountDrawer" @success="handleSuccess" />
+    <AreaModal @register="registerModal" @success="handleSuccess" />
   </PageWrapper>
 </template>
 <script setup>
   import { PageWrapper } from '/@/components/Page'
   import { BasicTable, useTable, TableAction } from '/@/components/Table'
-  import DeptTree from './components/deptTree.vue'
-  import EmployeeDrawer from './components/EmployeeDrawer.vue'
-  import { apiGetEmployeeList, apiDelEmployee } from '/@/api/index'
-  import { columns, searchFormSchema } from './employee.data'
-  import { useDrawer } from '/@/components/Drawer'
+  import AreaLeftTree from './components/AreaLeftTree.vue'
+  import AreaModal from './components/AreaModal.vue'
+  import { apiGetAreaList, apiDelArea } from '/@/api/index'
+  import { columns, searchFormSchema } from './area.data'
+  import { useModal } from '/@/components/Modal'
   // 注册表格
   const [registerTable, { reload }] = useTable({
     title: '员工列表',
-    api: apiGetEmployeeList,
+    api: apiGetAreaList,
     columns,
     actionColumn: {
       width: 120,
@@ -58,26 +55,20 @@
     showTableSetting: true,
     bordered: true,
   })
-  const [registerAccountDrawer, { openDrawer }] = useDrawer()
+  const [registerModal, { openModal }] = useModal()
   // 编辑
   function handleEdit(record) {
-    openDrawer(true, {
+    openModal(true, {
       record,
       isUpdate: true,
     })
   }
   // 删除
   async function handleDelete(record) {
-    await apiDelEmployee({ id: record.id })
+    await apiDelArea({ id: record.id })
     reload()
   }
 
-  // 新增账号
-  function handleCreate() {
-    openDrawer(true, {
-      isUpdate: false,
-    })
-  }
   // 刷新表格
   function handleSuccess() {
     reload()
