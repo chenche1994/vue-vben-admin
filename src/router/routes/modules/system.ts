@@ -50,6 +50,15 @@ const system: AppRouteModule = {
       },
       component: () => import('/@/views/system/dept/index.vue'),
     },
+    {
+      path: 'specialty',
+      name: 'SpecialtyManagement',
+      meta: {
+        title: t('routes.demo.system.specialty'),
+        ignoreKeepAlive: true,
+      },
+      component: () => import('/@/views/system/specialty/index.vue'),
+    },
   ],
 }
 

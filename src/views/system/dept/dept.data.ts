@@ -13,11 +13,10 @@ export function useBasicFormSchema() {
     {
       field: 'parentId',
       label: '上级部门',
-      component: 'ApiCascader',
+      component: 'ApiTreeSelect',
       componentProps: {
         api: apiGetOrgTree,
-        labelField: 'deptName',
-        valueField: 'id',
+        fieldNames: { label: 'name', value: 'id' },
         isLeaf: (item) => {
           return !item.children
         },

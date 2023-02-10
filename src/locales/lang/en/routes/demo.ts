@@ -165,6 +165,7 @@ export default {
     menu: 'Menu management',
     role: 'Role management',
     employee: 'employee management',
+    specialty: 'specialty management',
   },
   table: {
     table: 'Table',

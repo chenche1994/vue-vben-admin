@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="p-4">
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate">新增账号</a-button>
+        <a-button type="primary" @click="handleCreate">新增专业</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -24,51 +24,45 @@
         </template>
       </template>
     </BasicTable>
-    <AccountDrawer @register="registerAccountDrawer" @success="handleSuccess" />
+    <SpecialtyModel @register="registerModel" @success="handleSuccess" />
   </div>
 </template>
 <script setup>
   import { BasicTable, useTable, TableAction } from '/@/components/Table'
-  import AccountDrawer from './components/AccountDrawer.vue'
-  import { apiGetUserList, apiDelUser } from '/@/api/sys/user'
-  import { columns, searchFormSchema } from './account.data'
-  import { useDrawer } from '/@/components/Drawer'
+  import SpecialtyModel from './SpecialtyModel.vue'
+  import { apiGetSpecialty, apiDelSpecialty } from '/@/api'
+  import { columns } from './specialty.data'
+  import { useModal } from '/@/components/Modal'
   // 注册表格
   const [registerTable, { reload }] = useTable({
-    title: '账号列表',
-    api: apiGetUserList,
+    title: '专业列表',
+    api: apiGetSpecialty,
     columns,
     actionColumn: {
       width: 120,
       title: '操作',
       dataIndex: 'action',
     },
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      autoSubmitOnEnter: true,
-    },
-    useSearchForm: true,
     showTableSetting: true,
     bordered: true,
   })
-  const [registerAccountDrawer, { openDrawer }] = useDrawer()
+  const [registerModel, { openModal }] = useModal()
   // 编辑
   function handleEdit(record) {
-    openDrawer(true, {
+    openModal(true, {
       record,
       isUpdate: true,
     })
   }
   // 删除
   async function handleDelete(record) {
-    await apiDelUser({ id: record.id })
+    await apiDelSpecialty({ id: record.id })
     reload()
   }
 
   // 新增账号
   function handleCreate() {
-    openDrawer(true, {
+    openModal(true, {
       isUpdate: false,
     })
   }

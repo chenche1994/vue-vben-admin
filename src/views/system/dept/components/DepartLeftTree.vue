@@ -63,7 +63,7 @@
           @check="onCheck"
           @select="onSelect"
         >
-          <template #title="{ key: treeKey, title, dataRef }">
+          <template #title="{ key: treeKey, name, dataRef }">
             <a-dropdown :trigger="['contextmenu']">
               <Popconfirm
                 :visible="visibleTreeKey === treeKey"
@@ -74,7 +74,7 @@
                 @confirm="onDelete(dataRef)"
                 @visible-change="onVisibleChange"
               >
-                <span>{{ title }}</span>
+                <span>{{ name }}</span>
               </Popconfirm>
 
               <template #overlay>
@@ -113,11 +113,7 @@
   const loading = ref<boolean>(false)
   // 部门树列表数据
   const treeData = ref<any[]>([])
-  // 树结构格式化
-  // const fieldNames = reactive({
-  //   key: 'id',
-  //   title: 'name',
-  // })
+
   // 当前选中的项
   const checkedKeys = ref<any[]>([])
   // 当前展开的项

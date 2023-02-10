@@ -1,28 +1,22 @@
 <template>
-  <BasicDrawer
-    v-bind="$attrs"
-    @register="registerAccountDrawer"
-    title="用户编辑"
-    @ok="handleSubmit"
-    showFooter
-  >
+  <BasicModal v-bind="$attrs" @register="register" title="用户编辑" @ok="handleSubmit" showFooter>
     <BasicForm @register="registerForm" />
-  </BasicDrawer>
+  </BasicModal>
 </template>
 <script setup>
   import { ref, unref } from 'vue'
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer'
+  import { BasicModal, useModalInner } from '/@/components/Modal'
   import { BasicForm, useForm } from '/@/components/Form/index'
-  import { accountFormSchema } from '../account.data'
-  import { saveOrUpdateUser } from '/@/api'
+  import { specialtyFormSchema } from './specialty.data'
+  import { saveOrUpdateSpecialty } from '/@/api'
   // 声明Emits
   const emit = defineEmits(['success'])
 
   const isUpdate = ref(true)
   // 注册抽屉
-  const [registerAccountDrawer, { closeDrawer, setDrawerProps }] = useDrawerInner(async (data) => {
+  const [register, { closeModel, setModalProps }] = useModalInner(async (data) => {
     resetFields()
-    setDrawerProps({ confirmLoading: false })
+    setModalProps({ confirmLoading: false })
     isUpdate.value = !!data?.isUpdate
     if (unref(isUpdate)) {
       setFieldsValue({
@@ -36,7 +30,7 @@
   const [registerForm, { validate, setFieldsValue, resetFields }] = useForm({
     labelWidth: 100,
     baseColProps: { span: 24 },
-    schemas: accountFormSchema,
+    schemas: specialtyFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
@@ -45,14 +39,14 @@
   // 提交
   async function handleSubmit() {
     try {
-      setDrawerProps({ confirmLoading: true })
+      setModalProps({ confirmLoading: true })
       let values = await validate()
       //提交表单
-      await saveOrUpdateUser(values, isUpdate.value)
-      closeDrawer() // 关闭表单
+      await saveOrUpdateSpecialty(values, isUpdate.value)
+      closeModel() // 关闭表单
       emit('success')
     } finally {
-      setDrawerProps({ confirmLoading: false })
+      setModalProps({ confirmLoading: false })
     }
   }
 </script>
