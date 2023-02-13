@@ -13,13 +13,12 @@ export function useBasicFormSchema() {
     {
       field: 'parentId',
       label: '上级部门',
-      component: 'ApiTreeSelect',
+      component: 'TreeSelect',
       componentProps: {
-        api: apiGetOrgTree,
+        treeData: [],
+        placeholder: '无',
         fieldNames: { label: 'name', value: 'id' },
-        isLeaf: (item) => {
-          return !item.children
-        },
+        dropdownStyle: { maxHeight: '200px', overflow: 'auto' },
       },
     },
     {
@@ -69,3 +68,34 @@ export function useBasicFormSchema() {
   ]
   return { basicFormSchema }
 }
+
+// 职务填写表单
+export const postFormSchema: FormSchema[] = [
+  {
+    field: 'name',
+    label: '岗位名称',
+    component: 'Input',
+    required: true,
+  },
+  {
+    field: 'deptId',
+    label: '分配部门',
+    component: 'ApiTreeSelect',
+    componentProps: {
+      api: apiGetOrgTree,
+      fieldNames: { label: 'name', value: 'id' },
+      isLeaf: (item) => {
+        return !item.children
+      },
+    },
+    required: true,
+  },
+  {
+    field: 'desc',
+    label: '描述',
+    component: 'InputTextArea',
+    componentProps: {
+      placeholder: '请输入描述',
+    },
+  },
+]

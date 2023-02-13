@@ -61,6 +61,12 @@ export const accountFormSchema: FormSchema[] = [
     required: true,
   },
   {
+    field: 'mobile',
+    label: '电话',
+    component: 'Input',
+    required: true,
+  },
+  {
     field: 'userNick',
     label: '昵称',
     component: 'Input',
@@ -73,11 +79,6 @@ export const accountFormSchema: FormSchema[] = [
   {
     field: 'email',
     label: '邮箱',
-    component: 'Input',
-  },
-  {
-    field: 'mobile',
-    label: '电话',
     component: 'Input',
   },
   {

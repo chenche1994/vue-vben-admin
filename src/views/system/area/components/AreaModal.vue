@@ -1,7 +1,7 @@
 <template>
   <BasicModal
     v-bind="$attrs"
-    @register="register"
+    @register="registerModal"
     :title="`区域${title}`"
     @ok="handleSubmit"
     showFooter
@@ -16,7 +16,7 @@
   import { basicFormSchema } from '../area.data'
   import { saveOrUpdateArea } from '/@/api'
   // 声明Emits
-  const emit = defineEmits(['success'])
+  const emit = defineEmits(['success', 'register'])
 
   const isUpdate = ref(true)
   const title = computed(() => (isUpdate.value ? '编辑' : '新增'))
@@ -24,7 +24,7 @@
   const rowId = ref('')
 
   // 注册model
-  const [register, { closeModal, setModalProps }] = useModalInner(async (data) => {
+  const [registerModal, { closeModal, setModalProps }] = useModalInner(async (data) => {
     resetFields()
     setModalProps({ confirmLoading: false })
     isUpdate.value = !!data?.isUpdate

@@ -17,7 +17,7 @@ export function apiGetOrgTree(params?: OrgTreeParams) {
 }
 
 export function apiDelOrg(params: OrgDelParams, confirm = true) {
-  return useApiDelete(defHttp.post({ url: Api.Delete, params }), confirm)
+  return useApiDelete(() => defHttp.post({ url: Api.Delete, params }), confirm)
 }
 
 /**

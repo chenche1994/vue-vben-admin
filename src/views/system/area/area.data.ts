@@ -1,6 +1,6 @@
 import { FormSchema } from '/@/components/Form'
 import { BasicColumn } from '/@/components/Table/src/types/table'
-import { apiGetUserList, apiGetAreaTree, apiGetOrgTree } from '/@/api'
+import { apiGetEmployeeList, apiGetAreaTree, apiGetOrgTree } from '/@/api'
 
 // 部门新增编辑基础表单
 export const basicFormSchema: FormSchema[] = [
@@ -45,7 +45,7 @@ export const basicFormSchema: FormSchema[] = [
     label: '责任人',
     component: 'ApiSelect',
     componentProps: {
-      api: apiGetUserList,
+      api: apiGetEmployeeList,
       params: {
         pageIndex: 1,
         pageSize: 100,

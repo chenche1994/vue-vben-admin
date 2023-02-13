@@ -3,7 +3,7 @@ export interface OrgTreeParams {
 }
 
 export interface OrgDelParams {
-  id: string
+  idList: string
   enableCascade?: string // 存在下级不允许删除
 }
 

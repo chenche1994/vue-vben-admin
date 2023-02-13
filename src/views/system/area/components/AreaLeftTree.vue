@@ -18,16 +18,10 @@
         <a-dropdown>
           <template #overlay>
             <a-menu>
-              <a-menu-item key="1" @click="onDeleteBatch">
-                <icon icon="ant-design:delete-outlined" />
-                <span>删除</span>
-              </a-menu-item>
+              <a-menu-item key="1" @click="onDeleteBatch">删除 </a-menu-item>
             </a-menu>
           </template>
-          <a-button>
-            <span>批量操作 </span>
-            <icon icon="akar-icons:chevron-down" />
-          </a-button>
+          <a-button> 批量操作 </a-button>
         </a-dropdown>
       </template>
     </div>

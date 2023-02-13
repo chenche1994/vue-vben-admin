@@ -4,8 +4,11 @@
       <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddDepart"
         >新增</a-button
       >
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddChildDepart()"
-        >添加下级</a-button
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddChildDepart"
+        >新增子级</a-button
+      >
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddPost()"
+        >添加职务</a-button
       >
       <a-upload name="file" :showUploadList="false" :customRequest="onImportXls">
         <a-button type="primary" preIcon="ant-design:import-outlined">导入</a-button>
@@ -17,16 +20,10 @@
         <a-dropdown>
           <template #overlay>
             <a-menu>
-              <a-menu-item key="1" @click="onDeleteBatch">
-                <icon icon="ant-design:delete-outlined" />
-                <span>删除</span>
-              </a-menu-item>
+              <a-menu-item key="1" @click="onDeleteBatch">删除</a-menu-item>
             </a-menu>
           </template>
-          <a-button>
-            <span>批量操作 </span>
-            <icon icon="akar-icons:chevron-down" />
-          </a-button>
+          <a-button> 批量操作 </a-button>
         </a-dropdown>
       </template>
     </div>
@@ -96,6 +93,11 @@
       @register="registerModal"
       @success="loadRootTreeData"
     />
+    <PostFormModal
+      :rootTreeData="treeData"
+      @register="registerPostModal"
+      @success="loadRootTreeData"
+    />
   </a-card>
 </template>
 
@@ -105,6 +107,7 @@
   import { useMessage } from '/@/hooks/web/useMessage'
   import { apiGetOrgTree, apiDelOrg } from '/@/api/sys/org'
   import DepartFormModal from './DepartFormModal.vue'
+  import PostFormModal from './PostFormModal.vue'
   import { Popconfirm } from 'ant-design-vue'
 
   const emit = defineEmits(['select', 'rootTreeData'])
@@ -158,9 +161,10 @@
     searchKeyword.value = value
     // autoExpandParent.value = true
   })
-  // 注册 modal
+  // 注册部门 modal
   const [registerModal, { openModal }] = useModal()
-
+  // 注册职务modal
+  const [registerPostModal, { openModal: openPostModal }] = useModal()
   // 加载顶级部门信息
   async function loadRootTreeData() {
     try {
@@ -242,6 +246,15 @@
     openModal(true, { isUpdate: false, isChild: true, record })
   }
 
+  // 添加职务
+  function onAddPost(data = currentDepart.value) {
+    if (data == null) {
+      createMessage.warning('请先选择一个部门')
+      return
+    }
+    const record = { parentId: data.id }
+    openPostModal(true, { record })
+  }
   // 树复选框选择事件
   function onCheck(e) {
     if (Array.isArray(e)) {
@@ -272,7 +285,7 @@
     if (idList.length > 0) {
       try {
         loading.value = true
-        await apiDelOrg({ id: idList }, confirm)
+        await apiDelOrg({ idList: idList }, confirm)
         await loadRootTreeData()
       } finally {
         loading.value = false

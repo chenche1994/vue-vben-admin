@@ -16,7 +16,7 @@
   import { accountFormSchema } from '../account.data'
   import { saveOrUpdateUser } from '/@/api'
   // 声明Emits
-  const emit = defineEmits(['success'])
+  const emit = defineEmits(['success', 'register'])
 
   const isUpdate = ref(true)
   const title = computed(() => (isUpdate.value ? '编辑' : '新增'))

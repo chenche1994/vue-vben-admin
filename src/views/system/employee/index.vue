@@ -47,7 +47,7 @@
       dataIndex: 'action',
     },
     formConfig: {
-      labelWidth: 120,
+      labelWidth: 80,
       schemas: searchFormSchema,
       autoSubmitOnEnter: true,
       baseColProps: {

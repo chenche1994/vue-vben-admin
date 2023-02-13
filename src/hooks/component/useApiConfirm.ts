@@ -1,10 +1,10 @@
 import { useMessage } from '/@/hooks/web/useMessage'
 const { createConfirm } = useMessage()
 
-export function useApiDelete(func: Promise<any>, confirm = false) {
+export function useApiDelete(func, confirm = false) {
   return new Promise((resolve, reject) => {
     const doDelete = () => {
-      resolve(func)
+      resolve(func())
     }
     if (confirm) {
       createConfirm({

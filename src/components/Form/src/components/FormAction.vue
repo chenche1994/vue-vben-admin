@@ -90,7 +90,7 @@
         const actionSpan = 24 - span
         const advancedSpanObj = showAdvancedButton ? { span: actionSpan < 6 ? 24 : actionSpan } : {}
         const actionColOpt: Partial<ColEx> = {
-          style: { textAlign: 'right' },
+          style: { textAlign: 'left', paddingLeft: '4px' },
           span: showAdvancedButton ? 6 : 4,
           ...advancedSpanObj,
           ...actionColOptions,

@@ -1,6 +1,6 @@
 import { BasicColumn } from '/@/components/Table/src/types/table'
 import { FormSchema } from '/@/components/Form'
-import { apiGetOrgTree } from '/@/api'
+import { apiGetOrgTree, apiGetPostList } from '/@/api'
 
 // 表格页
 export const columns: BasicColumn[] = [
@@ -14,7 +14,8 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '账号',
-    dataIndex: 'account',
+    dataIndex: 'account?.userName',
+    customRender: ({ record }) => record.account?.userName,
   },
   {
     title: '所属部门',
@@ -80,7 +81,24 @@ export const accountFormSchema: FormSchema[] = [
   {
     field: 'postId',
     label: '职务',
-    component: 'ApiSelect',
+    component: 'ApiSelect', // TODO: 选中后验证不通过处理
+    componentProps: {
+      api: apiGetPostList,
+      params: {
+        pageIndex: 1,
+        pageSize: 100,
+      },
+      resultField: 'list',
+      labelField: 'name',
+      valueField: 'id',
+    },
+    required: true,
+  },
+  {
+    field: 'mobile',
+    label: '联系电话',
+    component: 'Input',
+    required: true,
   },
   {
     field: 'createAccount',
@@ -100,12 +118,6 @@ export const accountFormSchema: FormSchema[] = [
     field: 'hireDate',
     label: '入职时间',
     component: 'DatePicker',
-  },
-  {
-    field: 'mobile',
-    label: '联系电话',
-    component: 'Input',
-    required: true,
   },
   {
     field: 'email',

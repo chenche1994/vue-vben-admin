@@ -16,16 +16,33 @@
   import { accountFormSchema } from '../employee.data'
   import { saveOrUpdateEmployee } from '/@/api'
   // 声明Emits
-  const emit = defineEmits(['success'])
+  const emit = defineEmits(['success', 'register'])
 
   const isUpdate = ref(true)
   const title = computed(() => (isUpdate.value ? '编辑' : '新增'))
   const rowId = ref('')
+  // 注册表单
+  const [registerForm, { validate, setFieldsValue, resetFields, updateSchema }] = useForm({
+    labelWidth: 120,
+    baseColProps: { span: 24 },
+    schemas: accountFormSchema,
+    showActionButtonGroup: false,
+    actionColOptions: {
+      span: 23,
+    },
+  })
   // 注册抽屉
   const [register, { closeDrawer, setDrawerProps }] = useDrawerInner(async (data) => {
     resetFields()
     setDrawerProps({ confirmLoading: false })
     isUpdate.value = !!data?.isUpdate
+    updateSchema([
+      // 隐藏是否创建账号
+      {
+        field: 'createAccount',
+        show: !isUpdate.value,
+      },
+    ])
     if (unref(isUpdate)) {
       rowId.value = data.record.id
       console.log(rowId.value)
@@ -36,16 +53,6 @@
     }
   })
 
-  // 注册表单
-  const [registerForm, { validate, setFieldsValue, resetFields }] = useForm({
-    labelWidth: 120,
-    baseColProps: { span: 24 },
-    schemas: accountFormSchema,
-    showActionButtonGroup: false,
-    actionColOptions: {
-      span: 23,
-    },
-  })
   // 提交
   async function handleSubmit() {
     try {

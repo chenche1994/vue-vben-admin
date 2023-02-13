@@ -1,7 +1,7 @@
 <template>
   <BasicModal
     v-bind="$attrs"
-    @register="register"
+    @register="registerModel"
     :title="`专业${title}`"
     @ok="handleSubmit"
     showFooter
@@ -16,13 +16,13 @@
   import { specialtyFormSchema } from './specialty.data'
   import { saveOrUpdateSpecialty } from '/@/api'
   // 声明Emits
-  const emit = defineEmits(['success'])
+  const emit = defineEmits(['success', 'register'])
 
   const isUpdate = ref(true)
   const title = computed(() => (isUpdate.value ? '编辑' : '新增'))
   const rowId = ref('')
   // 注册抽屉
-  const [register, { closeModel, setModalProps }] = useModalInner(async (data) => {
+  const [registerModel, { closeModel, setModalProps }] = useModalInner(async (data) => {
     resetFields()
     setModalProps({ confirmLoading: false })
     isUpdate.value = !!data?.isUpdate
@@ -31,7 +31,7 @@
         // 设置回显值
         ...data.record,
       })
-      rowId = data.record.rowId
+      rowId.value = data.record.id
     }
   })
 
