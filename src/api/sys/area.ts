@@ -7,7 +7,7 @@ export enum AreaApi {
   Tree = '/area/tree',
   Update = '/area/update',
   getInfo = '/area/get',
-  ImportArea = '/area/import',
+  ImportArea = '/basic-api/area/import',
   Replicate = '/area/replicate',
   List = '/area/list',
   exportXlsUrl = '/area/export',
@@ -21,6 +21,10 @@ export function apiDelArea(params, confirm = true) {
 }
 export function apiGetAreaList(params) {
   return defHttp.post({ url: AreaApi.List, params })
+}
+
+export function apiCopyArea(params) {
+  return defHttp.post({ url: AreaApi.Replicate, params })
 }
 /**
  * 保存或者更新

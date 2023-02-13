@@ -24,7 +24,7 @@ export function useBasicFormSchema() {
     {
       field: 'specialtyId',
       label: '专业',
-      component: 'ApiCascader',
+      component: 'ApiTreeSelect',
       componentProps: {
         api: apiGetSpecialty,
         labelField: 'deptName',

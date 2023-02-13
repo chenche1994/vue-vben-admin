@@ -2,10 +2,10 @@
   <a-card :bordered="false" style="height: 100%" class="!m-4 !mr-0 w-1/4 xl:w-2/5">
     <div class="j-table-operator" style="width: 100%">
       <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddArea">新增</a-button>
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onCopyArea"
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onCopyArea()"
         >复制</a-button
       >
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onEditArea"
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onEditArea()"
         >编辑</a-button
       >
       <a-upload name="file" :showUploadList="false" :customRequest="onImportXls">
@@ -53,7 +53,7 @@
           :selectedKeys="selectedKeys"
           :checkStrictly="checkStrictly"
           :checkedKeys="checkedKeys"
-          :fieldNames="{ key: 'id', title: 'name' }"
+          :fieldNames="{ key: 'id', title: 'name', children: 'subList' }"
           v-model:expandedKeys="expandedKeys"
           @check="onCheck"
           @select="onSelect"
@@ -95,7 +95,7 @@
   import { useModal } from '/@/components/Modal'
   import { useMessage } from '/@/hooks/web/useMessage'
   import { useMethods } from '/@/hooks/system/useMethods'
-  import { apiGetAreaTree, apiDelArea, AreaApi } from '/@/api/sys/area'
+  import { apiGetAreaTree, apiDelArea, AreaApi, apiCopyArea } from '/@/api/sys/area'
   import AreaFormModal from './AreaModal.vue'
   import { Popconfirm } from 'ant-design-vue'
 
@@ -191,7 +191,7 @@
     let item = treeData.value[0]
     if (item) {
       if (!item.isLeaf) {
-        expandedKeys.value = [item.key]
+        expandedKeys.value = [item.id]
       }
       // 默认选中第一个
       setSelectedKey(item.id, item)
@@ -309,10 +309,22 @@
   }
 
   // 复制
-  function onCopyArea() {}
+  async function onCopyArea(data = currentArea.value) {
+    if (data == null) {
+      createMessage.warning('请先选择一个部门')
+      return
+    }
+    await apiCopyArea({ id: data.id })
+    loadRootTreeData()
+  }
 
   // 编辑
-  function onEditArea() {}
+  function onEditArea(data = currentArea.value) {
+    openModal(true, {
+      record: data,
+      isUpdate: true,
+    })
+  }
 
   defineExpose({
     loadRootTreeData,

@@ -29,7 +29,7 @@ export const basicFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'parentId',
+    field: 'orgId',
     label: '责任部门',
     component: 'ApiTreeSelect',
     componentProps: {
@@ -41,7 +41,7 @@ export const basicFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'charger',
+    field: 'employeeId',
     label: '责任人',
     component: 'ApiSelect',
     componentProps: {
@@ -51,6 +51,8 @@ export const basicFormSchema: FormSchema[] = [
         pageSize: 100,
       },
       resultField: 'list',
+      labelField: 'realName',
+      valueField: 'id',
     },
   },
   {

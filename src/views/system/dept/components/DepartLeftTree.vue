@@ -4,18 +4,17 @@
       <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddDepart"
         >新增</a-button
       >
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddChildDepart"
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddChildDepart()"
         >新增子级</a-button
       >
       <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddPost()"
         >添加职务</a-button
       >
       <a-upload name="file" :showUploadList="false" :customRequest="onImportXls">
-        <a-button type="primary" preIcon="ant-design:import-outlined">导入</a-button>
+        <a-button type="primary" preIcon="ant-design:import-outlined" style="margin-left: 8px"
+          >导入</a-button
+        >
       </a-upload>
-      <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls"
-        >导出</a-button
-      >
       <template v-if="checkedKeys.length > 0">
         <a-dropdown>
           <template #overlay>
@@ -55,7 +54,7 @@
           :selectedKeys="selectedKeys"
           :checkStrictly="checkStrictly"
           :checkedKeys="checkedKeys"
-          :fieldNames="{ key: 'id', title: 'name' }"
+          :fieldNames="{ key: 'id', title: 'name', children: 'subList' }"
           v-model:expandedKeys="expandedKeys"
           @check="onCheck"
           @select="onSelect"
@@ -202,7 +201,7 @@
     let item = treeData.value[0]
     if (item) {
       if (!item.isLeaf) {
-        expandedKeys.value = [item.key]
+        expandedKeys.value = [item.id]
       }
       // 默认选中第一个
       setSelectedKey(item.id, item)
@@ -317,9 +316,6 @@
   }
 
   function onImportXls() {}
-
-  function onExportXls() {}
-
   defineExpose({
     loadRootTreeData,
   })
