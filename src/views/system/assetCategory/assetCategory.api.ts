@@ -25,7 +25,7 @@ export function apiDelAssetCategory(params, confirm = true) {
 }
 
 /**
- * 保存或者更新部门角色
+ * 保存或者更新
  */
 export const saveOrUpdateAssetCategory = (params, isUpdate) => {
   if (isUpdate) {

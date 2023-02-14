@@ -1,10 +1,10 @@
 <template>
   <a-card :bordered="false" style="height: 100%">
     <div class="j-table-operator" style="width: 100%">
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddDepart"
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddCategory"
         >新增</a-button
       >
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddChildDepart()"
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddChildCategory()"
         >新增子级</a-button
       >
       <a-upload name="file" :showUploadList="false" :customRequest="onImportXls">
@@ -31,7 +31,7 @@
           <a @click="checkedKeys = []">清空</a>
         </template>
         <template v-else>
-          <span>{{ currentDepart?.name || '未选中' }}</span>
+          <span>{{ currentCategory?.name || '未选中' }}</span>
         </template>
       </template>
     </a-alert>
@@ -72,7 +72,7 @@
 
               <template #overlay>
                 <a-menu>
-                  <a-menu-item key="1" @click="onAddChildDepart(dataRef)">添加子级</a-menu-item>
+                  <a-menu-item key="1" @click="onAddChildCategory(dataRef)">添加子级</a-menu-item>
                   <a-menu-item key="2" @click="visibleTreeKey = treeKey">
                     <span style="color: red">删除</span>
                   </a-menu-item>
@@ -118,7 +118,7 @@
   // 树父子是否关联
   const checkStrictly = ref<boolean>(true)
   // 当前选中的资产类目
-  const currentDepart = ref<any>(null)
+  const currentCategory = ref<any>(null)
   // 控制确认删除提示框是否显示
   const visibleTreeKey = ref<any>(null)
   // 搜索关键字
@@ -175,7 +175,7 @@
             setSelectedKey(item.id, item)
           }
         } else {
-          emit('select', currentDepart.value)
+          emit('select', currentCategory.value)
         }
       }
       emit('rootTreeData', treeData.value)
@@ -215,18 +215,18 @@
   function setSelectedKey(key: string, data?: object) {
     selectedKeys.value = [key]
     if (data) {
-      currentDepart.value = data
+      currentCategory.value = data
       emit('select', data)
     }
   }
 
   // 添加一级节点
-  function onAddDepart() {
+  function onAddCategory() {
     openModal(true, { isUpdate: false, isChild: false })
   }
 
   // 添加子级节点
-  function onAddChildDepart(data = currentDepart.value) {
+  function onAddChildCategory(data = currentCategory.value) {
     if (data == null) {
       createMessage.warning('请先选择一个部门')
       return
@@ -260,7 +260,7 @@
    * @param idListRef array
    * @param confirm 是否显示确认提示框
    */
-  async function doDeleteDepart(idListRef, confirm = true) {
+  async function doDeleteCategory(idListRef, confirm = true) {
     const idList = unref(idListRef)
     if (idList.length > 0) {
       try {
@@ -277,14 +277,14 @@
   async function onDelete(data) {
     if (data) {
       onVisibleChange(false)
-      doDeleteDepart(data.id, false)
+      doDeleteCategory(data.id, false)
     }
   }
 
   // 批量删除
   async function onDeleteBatch() {
     try {
-      await doDeleteDepart(checkedKeys)
+      await doDeleteCategory(checkedKeys)
       checkedKeys.value = []
     } finally {
     }

@@ -37,10 +37,7 @@
 
   onMounted(() => {
     // 禁用字段
-    updateSchema([
-      { field: 'parentId', componentProps: { disabled: true } },
-      { field: 'orgCode', componentProps: { disabled: true } },
-    ])
+    updateSchema([{ field: 'parentId', componentProps: { disabled: true } }])
     // data 变化，重填表单
     watch(
       () => props.data,
