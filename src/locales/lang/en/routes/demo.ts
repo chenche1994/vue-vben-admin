@@ -168,6 +168,7 @@ export default {
     specialty: 'specialty management',
     area: 'area management',
     assetCategory: 'Asset Category',
+    parts: 'component management',
   },
   table: {
     table: 'Table',

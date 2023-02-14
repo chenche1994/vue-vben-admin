@@ -77,6 +77,15 @@ const system: AppRouteModule = {
       },
       component: () => import('/@/views/system/assetCategory/index.vue'),
     },
+    {
+      path: 'parts',
+      name: 'Parts',
+      meta: {
+        title: t('routes.demo.system.parts'),
+        ignoreKeepAlive: true,
+      },
+      component: () => import('/@/views/system/part/index.vue'),
+    },
   ],
 }
 

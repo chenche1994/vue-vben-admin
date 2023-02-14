@@ -161,6 +161,7 @@ export default {
     specialty: '专业管理',
     area: '区域管理',
     assetCategory: '资产类目管理',
+    parts: '组成部件',
   },
   table: {
     table: 'Table',
