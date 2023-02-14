@@ -100,6 +100,8 @@ export interface FormProps {
   autoFocusFirstItem?: boolean
   // Automatically collapse over the specified number of rows
   autoAdvancedLine?: number
+
+  autoAdvancedCol?: number
   // Always show lines
   alwaysShowLines?: number
   // Whether to show the operation button

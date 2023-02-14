@@ -68,6 +68,15 @@ const system: AppRouteModule = {
       },
       component: () => import('/@/views/system/area/index.vue'),
     },
+    {
+      path: 'asset-category',
+      name: 'AssetCategory',
+      meta: {
+        title: t('routes.demo.system.assetCategory'),
+        ignoreKeepAlive: true,
+      },
+      component: () => import('/@/views/system/assetCategory/index.vue'),
+    },
   ],
 }
 

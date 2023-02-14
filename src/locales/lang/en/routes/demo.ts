@@ -167,6 +167,7 @@ export default {
     employee: 'employee management',
     specialty: 'specialty management',
     area: 'area management',
+    assetCategory: 'Asset Category',
   },
   table: {
     table: 'Table',

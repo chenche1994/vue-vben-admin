@@ -325,6 +325,7 @@ export interface BasicTableProps<T = any> {
    * @type string
    */
   size?: SizeType
+  minHeight?: number
 
   /**
    * Table title renderer
@@ -405,6 +406,7 @@ export interface BasicTableProps<T = any> {
   onExpandedRowsChange?: (expandedRows: string[] | number[]) => void
 
   onColumnsChange?: (data: ColumnChangeParam[]) => void
+  showActionColumn?: boolean
 }
 
 export type CellFormat =

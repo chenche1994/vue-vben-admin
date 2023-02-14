@@ -160,6 +160,7 @@ export default {
     employee: '员工管理',
     specialty: '专业管理',
     area: '区域管理',
+    assetCategory: '资产类目管理',
   },
   table: {
     table: 'Table',

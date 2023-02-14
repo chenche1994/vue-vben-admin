@@ -1,11 +1,6 @@
 {
   "name": "vben-admin",
   "version": "2.8.0",
-  "author": {
-    "name": "vben",
-    "email": "anncwb@126.com",
-    "url": "https://github.com/anncwb"
-  },
   "scripts": {
     "commit": "czg",
     "bootstrap": "pnpm install",
@@ -164,26 +159,14 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "{!(package)*.json,*.code-snippets,.!(browserslist)*rc}": [
-      "prettier --write--parser json"
-    ],
-    "package.json": [
-      "prettier --write"
+      "eslint --fix"
     ],
     "*.vue": [
       "eslint --fix",
-      "prettier --write",
       "stylelint --fix"
     ],
     "*.{scss,less,styl,html}": [
-      "stylelint --fix",
-      "prettier --write"
-    ],
-    "*.md": [
-      "prettier --write"
+      "stylelint --fix"
     ]
   },
   "config": {
