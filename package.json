@@ -159,14 +159,14 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix"
+      "eslint "
     ],
     "*.vue": [
-      "eslint --fix",
-      "stylelint --fix"
+      "eslint ",
+      "stylelint "
     ],
     "*.{scss,less,styl,html}": [
-      "stylelint --fix"
+      "stylelint "
     ]
   },
   "config": {

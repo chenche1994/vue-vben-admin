@@ -2,7 +2,7 @@
   <div class="p-4">
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary"> 新增 </a-button>
+        <a-button type="primary" @click="openDesignModal()"> 新增 </a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -13,7 +13,7 @@
         </template>
       </template>
     </BasicTable>
-    <DesignModel @register="registerDesignModal" />
+    <DesignModel @register="registerDesignModal" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -22,6 +22,7 @@
   import { demoListApi } from '/@/api/demo/table'
   import { useModal } from '/@/components/Modal'
   import DesignModel from '../components/designModel.vue'
+  import { apiCreateForm } from './formlist.api'
   // 注册表格
   const [registerTable] = useTable({
     title: '',
@@ -64,5 +65,9 @@
         onClick: registerDesignModal.bind(null, record),
       },
     ]
+  }
+
+  function handleSuccess(option) {
+    apiCreateForm(option)
   }
 </script>

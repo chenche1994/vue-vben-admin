@@ -7,13 +7,15 @@
     @ok="handleSubmit"
     @register="registerModal"
   >
-    <fc-designer ref="designer" />
+    <FcDesigner ref="designer" />
   </BasicModal>
 </template>
-<script lang="ts" setup>
+<script setup>
   import { BasicModal, useModalInner } from '/@/components/Modal'
-  import FcDesigner from '@form-create/designer'
+  import FcDesigner from '/@/../lib/fc/index.es.js'
   import { ref } from 'vue'
+  import { useMessage } from '/@/hooks/web/useMessage'
+  const { createErrorModal } = useMessage()
   const designer = ref()
   // 声明Emits
   const emit = defineEmits(['success'])
@@ -25,8 +27,20 @@
   function handleSubmit() {
     const rule = designer.value.getRule()
     const option = designer.value.getOption()
-    console.log(rule, option)
+    const { form } = option
+    if (!form?.name) {
+      return createErrorModal({ content: '请输入表单name' })
+    }
+    if (!form?.formKey) {
+      return createErrorModal({ content: '请输入表单的formKey' })
+    }
     closeModal() // 关闭表单
-    emit('success', { rule, option })
+    const config = {
+      name: form.name,
+      key: form.formKey,
+      formConfig: rule,
+      formOption: form,
+    }
+    emit('success', config)
   }
 </script>

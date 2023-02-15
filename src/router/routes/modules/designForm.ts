@@ -9,20 +9,27 @@ const designForm: AppRouteModule = {
   component: LAYOUT,
   redirect: '/designForm/index',
   meta: {
-    hideChildrenInMenu: true,
     icon: 'simple-icons:about-dot-me',
-    title: '表单设计',
+    title: '工单流程设计',
     orderNo: 1000,
   },
   children: [
     {
       path: 'index',
+      name: 'Procedure',
+      component: () => import('/@/views/designForm/procedure/index.vue'),
+      meta: {
+        title: '流程管理',
+        icon: 'simple-icons:about-dot-me',
+      },
+    },
+    {
+      path: 'design-form',
       name: 'DesignFormPage',
       component: () => import('/@/views/designForm/formList/index.vue'),
       meta: {
-        title: '表单设计',
+        title: '表单管理',
         icon: 'simple-icons:about-dot-me',
-        hideMenu: true,
       },
     },
   ],

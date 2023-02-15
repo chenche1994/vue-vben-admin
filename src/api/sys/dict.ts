@@ -9,20 +9,20 @@ enum Api {
   Update = '/custom-config/updadte',
 }
 
-export function apiDelDict() {
-  return defHttp.post({ url: Api.Delete })
+export function apiDelDict(params) {
+  return defHttp.post({ url: Api.Delete, params })
 }
 
-export function apiGetDictList() {
-  return defHttp.post({ url: Api.List })
+export function apiGetDictList(params) {
+  return defHttp.post({ url: Api.List, params })
 }
 
-export function apiGetDictByKey() {
-  return defHttp.post({ url: Api.GetByKey })
+export function apiGetDictByKey(params) {
+  return defHttp.post({ url: Api.GetByKey, params })
 }
 
 /**
- * 保存或者更新部门角色
+ * 保存或者更新
  */
 export const saveOrUpdateDict = (params, isUpdate) => {
   if (isUpdate) {
