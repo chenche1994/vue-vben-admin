@@ -33,8 +33,6 @@
 
     <!-- action  -->
     <div :class="`${prefixCls}-action`">
-      <AppSearch :class="`${prefixCls}-action__item `" v-if="getShowSearch" />
-
       <Notify v-if="getShowNotice" :class="`${prefixCls}-action__item notify-item`" />
 
       <FullScreen v-if="getShowFullScreen" :class="`${prefixCls}-action__item fullscreen-item`" />
@@ -61,8 +59,6 @@
   import { AppLogo } from '/@/components/Application'
   import LayoutMenu from '../menu/index.vue'
   import LayoutTrigger from '../trigger/index.vue'
-
-  import { AppSearch } from '/@/components/Application'
 
   import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting'
   import { useMenuSetting } from '/@/hooks/setting/useMenuSetting'
@@ -91,7 +87,6 @@
       AppLocalePicker,
       FullScreen,
       Notify,
-      AppSearch,
       SettingDrawer: createAsyncComponent(() => import('/@/layouts/default/setting/index.vue'), {
         loading: true,
       }),
@@ -119,7 +114,6 @@
         getShowBread,
         getShowHeaderLogo,
         getShowHeader,
-        getShowSearch,
       } = useHeaderSetting()
 
       const { getShowLocalePicker } = useLocale()
@@ -187,7 +181,6 @@
         getIsMixSidebar,
         getShowSettingButton,
         getShowSetting,
-        getShowSearch,
       }
     },
   })

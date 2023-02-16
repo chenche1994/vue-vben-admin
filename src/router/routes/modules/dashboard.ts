@@ -20,6 +20,7 @@ const dashboard: AppRouteModule = {
       component: () => import('/@/views/dashboard/todoList/index.vue'),
       meta: {
         title: '待办列表',
+        ignoreKeepAlive: false,
       },
     },
     {
@@ -28,6 +29,7 @@ const dashboard: AppRouteModule = {
       component: () => import('/@/views/dashboard/doneList/index.vue'),
       meta: {
         title: '已办列表',
+        ignoreKeepAlive: false,
       },
     },
   ],

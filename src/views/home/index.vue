@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper class="p-4">
+  <PageWrapper>
     <div class="flex mb-4">
       <MyForm class="!mr-4 flex-1" />
       <ToolsCard class="flex-1" />

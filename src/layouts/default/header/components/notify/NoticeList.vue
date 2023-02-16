@@ -24,12 +24,6 @@
               </div>
             </div>
           </template>
-
-          <template #avatar>
-            <a-avatar v-if="item.avatar" class="avatar" :src="item.avatar" />
-            <span v-else> {{ item.avatar }}</span>
-          </template>
-
           <template #description>
             <div>
               <div class="description" v-if="item.description">
