@@ -18,6 +18,7 @@ export function useTableForm(
       ...formConfig,
       submitButtonOptions: { loading: unref(getLoading), ...submitButtonOptions },
       compact: true,
+      autoSubmitOnEnter: true,
     }
   })
 

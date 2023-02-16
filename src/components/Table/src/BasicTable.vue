@@ -1,7 +1,6 @@
 <template>
   <div ref="wrapRef" :class="getWrapperClass">
     <BasicForm
-      ref="formRef"
       submitOnReset
       v-bind="getFormProps"
       v-if="getBindValues.useSearchForm"
@@ -15,27 +14,29 @@
       </template>
     </BasicForm>
 
-    <Table
-      ref="tableElRef"
-      v-bind="getBindValues"
-      :rowClassName="getRowClassName"
-      v-show="getEmptyDataIsShowTable"
-      @change="handleTableChange"
-    >
-      <template #[item]="data" v-for="item in Object.keys($slots)" :key="item">
-        <slot :name="item" v-bind="data || {}"></slot>
-      </template>
-      <template #headerCell="{ column }">
-        <HeaderCell :column="column" />
-      </template>
-      <!-- 增加对antdv3.x兼容 -->
-      <template #bodyCell="data">
-        <slot name="bodyCell" v-bind="data || {}"></slot>
-      </template>
-      <!--      <template #[`header-${column.dataIndex}`] v-for="(column, index) in columns" :key="index">-->
-      <!--        <HeaderCell :column="column" />-->
-      <!--      </template>-->
-    </Table>
+    <!-- antd v3 升级兼容，阻止数据的收集，防止控制台报错 -->
+    <!-- https://antdv.com/docs/vue/migration-v3-cn -->
+    <a-form-item-rest>
+      <Table
+        ref="tableElRef"
+        v-bind="getBindValues"
+        :rowClassName="getRowClassName"
+        v-show="getEmptyDataIsShowTable"
+        @resizeColumn="handleResizeColumn"
+        @change="handleTableChange"
+      >
+        <template #[item]="data" v-for="item in Object.keys($slots)" :key="item">
+          <slot :name="item" v-bind="data || {}"></slot>
+        </template>
+        <template #headerCell="{ column }">
+          <HeaderCell :column="column" />
+        </template>
+        <!-- 增加对antdv3.x兼容 -->
+        <template #bodyCell="data">
+          <slot name="bodyCell" v-bind="data || {}"></slot>
+        </template>
+      </Table>
+    </a-form-item-rest>
   </div>
 </template>
 <script lang="ts">
@@ -47,14 +48,12 @@
   import { PageWrapperFixedHeightKey } from '/@/components/Page'
   import HeaderCell from './components/HeaderCell.vue'
   import { InnerHandlers } from './types/table'
-
   import { usePagination } from './hooks/usePagination'
   import { useColumns } from './hooks/useColumns'
   import { useDataSource } from './hooks/useDataSource'
   import { useLoading } from './hooks/useLoading'
   import { useRowSelection } from './hooks/useRowSelection'
   import { useTableScroll } from './hooks/useTableScroll'
-  import { useTableScrollTo } from './hooks/useScrollTo'
   import { useCustomRow } from './hooks/useCustomRow'
   import { useTableStyle } from './hooks/useTableStyle'
   import { useTableHeader } from './hooks/useTableHeader'
@@ -70,7 +69,6 @@
   import { warn } from '/@/utils/log'
 
   export default defineComponent({
-    name: 'BasicTable',
     components: {
       Table,
       BasicForm,
@@ -94,13 +92,13 @@
       'expanded-rows-change',
       'change',
       'columns-change',
+      'table-redo',
     ],
     setup(props, { attrs, emit, slots, expose }) {
       const tableElRef = ref(null)
       const tableData = ref<Recordable[]>([])
 
       const wrapRef = ref(null)
-      const formRef = ref(null)
       const innerPropsRef = ref<Partial<BasicTableProps>>()
 
       const { prefixCls } = useDesign('basic-table')
@@ -132,7 +130,6 @@
         getRowSelection,
         getRowSelectionRef,
         getSelectRows,
-        setSelectedRows,
         clearSelectedRowKeys,
         getSelectRowKeys,
         deleteSelectRowByKey,
@@ -161,7 +158,7 @@
           getPaginationInfo,
           setLoading,
           setPagination,
-          getFieldsValue: formActions.getFieldsValue,
+          validate: formActions.validate,
           clearSelectedRowKeys,
         },
         emit,
@@ -190,11 +187,7 @@
         getColumnsRef,
         getRowSelectionRef,
         getDataSourceRef,
-        wrapRef,
-        formRef,
       )
-
-      const { scrollTo } = useTableScrollTo(tableElRef, getDataSourceRef)
 
       const { customRow } = useCustomRow(getProps, {
         setSelectedRowKeys,
@@ -206,11 +199,7 @@
 
       const { getRowClassName } = useTableStyle(getProps, prefixCls)
 
-      const { getExpandOption, expandAll, expandRows, collapseAll } = useTableExpand(
-        getProps,
-        tableData,
-        emit,
-      )
+      const { getExpandOption, expandAll, collapseAll } = useTableExpand(getProps, tableData, emit)
 
       const handlers: InnerHandlers = {
         onColumnsChange: (data: ColumnChangeParam[]) => {
@@ -235,8 +224,11 @@
       const getBindValues = computed(() => {
         const dataSource = unref(getDataSourceRef)
         let propsData: Recordable = {
+          // ...(dataSource.length === 0 ? { getPopupContainer: () => document.body } : {}),
           ...attrs,
           customRow,
+          //树列表展开使用AntDesignVue默认的加减图标 author:scott date:20210914
+          //expandIcon: slots.expandIcon ? null : expandIcon(),
           ...unref(getProps),
           ...unref(getHeaderProps),
           scroll: unref(getScrollRef),
@@ -250,9 +242,9 @@
           footer: unref(getFooterProps),
           ...unref(getExpandOption),
         }
-        // if (slots.expandedRowRender) {
-        //   propsData = omit(propsData, 'scroll');
-        // }
+        if (slots.expandedRowRender) {
+          propsData = omit(propsData, 'scroll')
+        }
 
         propsData = omit(propsData, ['class', 'onChange'])
         return propsData
@@ -285,7 +277,6 @@
       const tableAction: TableActionType = {
         reload,
         getSelectRows,
-        setSelectedRows,
         clearSelectedRowKeys,
         getSelectRowKeys,
         deleteSelectRowByKey,
@@ -312,9 +303,7 @@
         getShowPagination,
         setCacheColumnsByField,
         expandAll,
-        expandRows,
         collapseAll,
-        scrollTo,
         getSize: () => {
           return unref(getBindValues).size as SizeType
         },
@@ -326,7 +315,6 @@
       emit('register', tableAction, formActions)
 
       return {
-        formRef,
         tableElRef,
         getBindValues,
         getLoading,
@@ -338,6 +326,9 @@
         wrapRef,
         tableAction,
         redoHeight,
+        handleResizeColumn: (w, col) => {
+          col.width = w
+        },
         getFormProps: getFormProps as any,
         replaceFormSlotKey,
         getFormSlotKeys,
@@ -357,11 +348,18 @@
     .ant-table-tbody > tr.ant-table-row-selected td {
       background-color: #262626;
     }
+
+    .@{prefix-cls} {
+      //表格选择工具栏样式
+      .alert {
+        background-color: #323232;
+        border-color: #424242;
+      }
+    }
   }
 
   .@{prefix-cls} {
     max-width: 100%;
-    height: 100%;
 
     &-row__striped {
       td {
@@ -370,12 +368,11 @@
     }
 
     &-form-container {
-      padding: 16px;
+      padding: 10px;
 
       .ant-form {
-        width: 100%;
-        padding: 12px 10px 6px;
-        margin-bottom: 16px;
+        padding: 12px 10px 6px 10px;
+        margin-bottom: 8px;
         background-color: @component-background;
         border-radius: 2px;
       }
@@ -392,7 +389,7 @@
 
       .ant-table-title {
         min-height: 40px;
-        padding: 0 0 8px !important;
+        padding: 0 0 8px 0 !important;
       }
 
       .ant-table.ant-table-bordered .ant-table-title {
@@ -411,6 +408,11 @@
         justify-content: space-between;
         align-items: center;
       }
+      //定义行颜色
+      .trcolor {
+        background-color: rgba(255, 192, 203, 0.31);
+        color: red;
+      }
 
       //.ant-table-tbody > tr.ant-table-row-selected td {
       //background-color: fade(@primary-color, 8%) !important;
@@ -418,7 +420,7 @@
     }
 
     .ant-pagination {
-      margin: 10px 0 0;
+      margin: 10px 0 0 0;
     }
 
     .ant-table-footer {
@@ -432,7 +434,7 @@
         border: none !important;
       }
 
-      .ant-table-body {
+      .ant-table-content {
         overflow-x: hidden !important;
         //  overflow-y: scroll !important;
       }
@@ -440,6 +442,12 @@
       td {
         padding: 12px 8px;
       }
+    }
+    //表格选择工具栏样式
+    .alert {
+      height: 38px;
+      background-color: #e6f7ff;
+      border-color: #91d5ff;
     }
 
     &--inset {

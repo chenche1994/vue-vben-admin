@@ -14,6 +14,8 @@ export interface ActionItem extends ButtonProps {
   // 业务控制是否显示
   ifShow?: boolean | ((action: ActionItem) => boolean)
   tooltip?: string | TooltipProps
+  // 自定义类名
+  class?: string | Record<string, boolean> | any[]
 }
 
 export interface PopConfirm {
@@ -23,17 +25,5 @@ export interface PopConfirm {
   confirm: Fn
   cancel?: Fn
   icon?: string
-  placement?:
-    | 'top'
-    | 'left'
-    | 'right'
-    | 'bottom'
-    | 'topLeft'
-    | 'topRight'
-    | 'leftTop'
-    | 'leftBottom'
-    | 'rightTop'
-    | 'rightBottom'
-    | 'bottomLeft'
-    | 'bottomRight'
+  placement?: string
 }

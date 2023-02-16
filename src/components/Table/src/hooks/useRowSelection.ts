@@ -20,6 +20,10 @@ export function useRowSelection(
     }
 
     return {
+      // AntDV3.0 之后使用远程加载数据进行分页时，
+      // 默认会清空上一页选择的行数据（导致无法跨页选择），
+      // 将此属性设置为 true 即可解决。
+      preserveSelectedRowKeys: true,
       selectedRowKeys: unref(selectedRowKeysRef),
       onChange: (selectedRowKeys: string[]) => {
         setSelectedRowKeys(selectedRowKeys)
@@ -66,13 +70,13 @@ export function useRowSelection(
     selectedRowKeysRef.value = rowKeys
     const allSelectedRows = findNodeAll(
       toRaw(unref(tableData)).concat(toRaw(unref(selectedRowRef))),
-      (item) => rowKeys?.includes(item[unref(getRowKey) as string]),
+      (item) => rowKeys.includes(item[unref(getRowKey) as string]),
       {
         children: propsRef.value.childrenColumnName ?? 'children',
       },
     )
     const trueSelectedRows: any[] = []
-    rowKeys?.forEach((key: string) => {
+    rowKeys.forEach((key: string) => {
       const found = allSelectedRows.find((item) => item[unref(getRowKey) as string] === key)
       found && trueSelectedRows.push(found)
     })

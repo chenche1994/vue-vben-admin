@@ -1,9 +1,10 @@
 <template>
-  <Tooltip placement="top">
+  <Tooltip placement="top" v-bind="getBindProps">
     <template #title>
       <span>{{ t('component.table.settingColumn') }}</span>
     </template>
     <Popover
+      v-model:visible="popoverVisible"
       placement="bottomLeft"
       trigger="click"
       @visible-change="handleVisibleChange"
@@ -24,17 +25,13 @@
             {{ t('component.table.settingIndexColumnShow') }}
           </Checkbox>
 
-          <Checkbox
-            v-model:checked="checkSelect"
-            @change="handleSelectCheckChange"
-            :disabled="!defaultRowSelection"
-          >
-            {{ t('component.table.settingSelectColumnShow') }}
-          </Checkbox>
-
-          <a-button size="small" type="link" @click="reset">
-            {{ t('common.resetText') }}
-          </a-button>
+          <!--                    <Checkbox-->
+          <!--                            v-model:checked="checkSelect"-->
+          <!--                            @change="handleSelectCheckChange"-->
+          <!--                            :disabled="!defaultRowSelection"-->
+          <!--                    >-->
+          <!--                        {{ t('component.table.settingSelectColumnShow') }}-->
+          <!--                    </Checkbox>-->
         </div>
       </template>
 
@@ -93,6 +90,12 @@
             </template>
           </CheckboxGroup>
         </ScrollContainer>
+        <div :class="`${prefixCls}__popover-footer`">
+          <a-button size="small" @click="reset">
+            {{ t('common.resetText') }}
+          </a-button>
+          <a-button size="small" type="primary" @click="saveSetting"> 保存 </a-button>
+        </div>
       </template>
       <SettingOutlined />
     </Popover>
@@ -117,6 +120,7 @@
   import { ScrollContainer } from '/@/components/Container'
   import { useI18n } from '/@/hooks/web/useI18n'
   import { useTableContext } from '../../hooks/useTableContext'
+  import { useColumnsCache } from '../../hooks/useColumnsCache'
   import { useDesign } from '/@/hooks/web/useDesign'
   // import { useSortable } from '/@/hooks/web/useSortable';
   import { isFunction, isNullAndUnDef } from '/@/utils/is'
@@ -151,12 +155,18 @@
       Divider,
       Icon,
     },
+    props: {
+      isMobile: Boolean,
+    },
     emits: ['columns-change'],
 
-    setup(_, { emit, attrs }) {
+    setup(props, { emit, attrs }) {
       const { t } = useI18n()
       const table = useTableContext()
-
+      const popoverVisible = ref(true)
+      // update-begin--author:sunjianlei---date:20221101---for: 修复第一次进入时列表配置不能拖拽
+      nextTick(() => (popoverVisible.value = false))
+      // update-end--author:sunjianlei---date:20221101---for: 修复第一次进入时列表配置不能拖拽
       const defaultRowSelection = omit(table.getRowSelection(), 'selectedRowKeys')
       let inited = false
 
@@ -181,6 +191,31 @@
       const getValues = computed(() => {
         return unref(table?.getBindValues) || {}
       })
+
+      const getBindProps = computed(() => {
+        let obj = {}
+        if (props.isMobile) {
+          obj['visible'] = false
+        }
+        return obj
+      })
+
+      let sortable: Sortable
+      const sortableOrder = ref<string[]>()
+
+      // 列表字段配置缓存
+      const { saveSetting, resetSetting } = useColumnsCache(
+        {
+          state,
+          popoverVisible,
+          plainOptions,
+          plainSortOptions,
+          sortableOrder,
+          checkIndex,
+        },
+        setColumns,
+        handleColumnFixed,
+      )
 
       watchEffect(() => {
         setTimeout(() => {
@@ -213,7 +248,7 @@
         const columns = getColumns()
 
         const checkList = table
-          .getColumns({ ignoreAction: true, ignoreIndex: true })
+          .getColumns({ ignoreAction: true })
           .map((item) => {
             if (item.defaultHidden) {
               return ''
@@ -258,7 +293,7 @@
       const indeterminate = computed(() => {
         const len = plainOptions.value.length
         let checkedLen = state.checkedList.length
-        // unref(checkIndex) && checkedLen--;
+        unref(checkIndex) && checkedLen--
         return checkedLen > 0 && checkedLen < len
       })
 
@@ -273,8 +308,6 @@
         setColumns(checkedList)
       }
 
-      let sortable: Sortable
-      let sortableOrder: string[] = []
       // reset columns
       function reset() {
         state.checkedList = [...state.defaultCheckList]
@@ -282,7 +315,10 @@
         plainOptions.value = unref(cachePlainOptions)
         plainSortOptions.value = unref(cachePlainOptions)
         setColumns(table.getCacheColumns())
-        sortable.sort(sortableOrder)
+        if (sortableOrder.value) {
+          sortable.sort(sortableOrder.value)
+        }
+        resetSetting()
       }
 
       // Open the pop-up window for drag and drop initialization
@@ -316,16 +352,13 @@
               }
 
               plainSortOptions.value = columns
-
-              setColumns(
-                columns
-                  .map((col: Options) => col.value)
-                  .filter((value: string) => state.checkedList.includes(value)),
-              )
+              setColumns(columns)
             },
           })
-          // 记录原始order 序列
-          sortableOrder = sortable.toArray()
+          // 记录原始 order 序列
+          if (!sortableOrder.value) {
+            sortableOrder.value = sortable.toArray()
+          }
           inited = true
         })
       }
@@ -383,13 +416,16 @@
       }
 
       return {
+        getBindProps,
         t,
         ...toRefs(state),
+        popoverVisible,
         indeterminate,
         onCheckAllChange,
         onChange,
         plainOptions,
         reset,
+        saveSetting,
         prefixCls,
         columnListRef,
         handleVisibleChange,
@@ -420,6 +456,19 @@
       justify-content: space-between;
     }
 
+    /* 卡片底部样式 */
+    &__popover-footer {
+      position: relative;
+      top: 7px;
+      text-align: right;
+      padding: 4px 0 0;
+      border-top: 1px solid #f0f0f0;
+
+      .ant-btn {
+        margin-right: 6px;
+      }
+    }
+
     &__check-item {
       display: flex;
       align-items: center;
@@ -437,7 +486,7 @@
 
     &__fixed-left,
     &__fixed-right {
-      color: rgb(0 0 0 / 45%);
+      color: rgba(0, 0, 0, 0.45);
       cursor: pointer;
 
       &.active,

@@ -64,8 +64,14 @@ export function useTable(tableProps?: Props): [
     return table as TableActionType
   }
 
+  function getTableRef() {
+    return tableRef
+  }
+
   const methods: TableActionType & {
     getForm: () => FormActionType
+  } & {
+    getTableRef: () => any
   } = {
     reload: async (opt?: FetchParams) => {
       return await getTableInstance().reload(opt)
@@ -75,9 +81,6 @@ export function useTable(tableProps?: Props): [
     },
     redoHeight: () => {
       getTableInstance().redoHeight()
-    },
-    setSelectedRows: (rows: Recordable[]) => {
-      return toRaw(getTableInstance().setSelectedRows(rows))
     },
     setLoading: (loading: boolean) => {
       getTableInstance().setLoading(loading)
@@ -155,14 +158,11 @@ export function useTable(tableProps?: Props): [
     expandAll: () => {
       getTableInstance().expandAll()
     },
-    expandRows: (keys: string[]) => {
-      getTableInstance().expandRows(keys)
-    },
     collapseAll: () => {
       getTableInstance().collapseAll()
     },
-    scrollTo: (pos: string) => {
-      getTableInstance().scrollTo(pos)
+    getTableRef: () => {
+      return getTableRef()
     },
   }
 

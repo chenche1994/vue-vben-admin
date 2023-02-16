@@ -49,6 +49,7 @@ export interface ExpandedRowRenderRecord<T> extends TableCustomRecord<T> {
   indent?: number
   expanded?: boolean
 }
+
 export interface ColumnFilterItem {
   text?: string
   value?: string
@@ -84,20 +85,17 @@ export type SizeType = 'default' | 'middle' | 'small' | 'large'
 
 export interface TableActionType {
   reload: (opt?: FetchParams) => Promise<void>
-  setSelectedRows: (rows: Recordable[]) => void
   getSelectRows: <T = Recordable>() => T[]
   clearSelectedRowKeys: () => void
   expandAll: () => void
-  expandRows: (keys: string[] | number[]) => void
   collapseAll: () => void
-  scrollTo: (pos: string) => void // pos: id | "top" | "bottom"
   getSelectRowKeys: () => string[]
   deleteSelectRowByKey: (key: string) => void
   setPagination: (info: Partial<PaginationProps>) => void
   setTableData: <T = Recordable>(values: T[]) => void
   updateTableDataRecord: (rowKey: string | number, record: Recordable) => Recordable | void
   deleteTableDataRecord: (rowKey: string | number | string[] | number[]) => void
-  insertTableDataRecord: (record: Recordable | Recordable[], index?: number) => Recordable[] | void
+  insertTableDataRecord: (record: Recordable, index?: number) => Recordable | void
   findTableDataRecord: (rowKey: string | number) => Recordable | void
   getColumns: (opt?: GetColumnsParams) => BasicColumn[]
   setColumns: (columns: BasicColumn[] | string[]) => void
@@ -130,9 +128,15 @@ export interface FetchSetting {
 }
 
 export interface TableSetting {
+  // 是否显示刷新按钮
   redo?: boolean
+  // 是否显示尺寸调整按钮
   size?: boolean
+  // 是否显示字段调整按钮
   setting?: boolean
+  // 缓存“字段调整”配置的key，用于页面上有多个表格需要区分的情况
+  cacheKey?: string
+  // 是否显示全屏按钮
   fullScreen?: boolean
 }
 
@@ -189,11 +193,12 @@ export interface BasicTableProps<T = any> {
   showIndexColumn?: boolean
   // 序号列配置
   indexColumnProps?: BasicColumn
+  // 是否显示操作列
+  showActionColumn?: boolean
+  // 操作列配置
   actionColumn?: BasicColumn
   // 文本超过宽度是否显示。。。
   ellipsis?: boolean
-  // 是否继承父级高度（父级高度-表单高度-padding高度）
-  isCanResizeParent?: boolean
   // 是否可以自适应高度
   canResize?: boolean
   // 自适应高度偏移， 计算结果-偏移量
@@ -207,6 +212,8 @@ export interface BasicTableProps<T = any> {
   dataSource?: Recordable[]
   // 标题右侧提示
   titleHelpMessage?: string | string[]
+  // 表格最小高度
+  minHeight?: number
   // 表格滚动最大高度
   maxHeight?: number
   // 是否显示边框
@@ -325,7 +332,6 @@ export interface BasicTableProps<T = any> {
    * @type string
    */
   size?: SizeType
-  minHeight?: number
 
   /**
    * Table title renderer
@@ -406,7 +412,6 @@ export interface BasicTableProps<T = any> {
   onExpandedRowsChange?: (expandedRows: string[] | number[]) => void
 
   onColumnsChange?: (data: ColumnChangeParam[]) => void
-  showActionColumn?: boolean
 }
 
 export type CellFormat =
@@ -415,7 +420,7 @@ export type CellFormat =
   | Map<string | number, any>
 
 // @ts-ignore
-export interface BasicColumn extends ColumnProps<Recordable> {
+export interface BasicColumn extends ColumnProps {
   children?: BasicColumn[]
   filters?: {
     text: string
@@ -430,7 +435,7 @@ export interface BasicColumn extends ColumnProps<Recordable> {
   customTitle?: VueNode
 
   slots?: Recordable
-  bodyCell?: Recordable
+
   // Whether to hide the column by default, it can be displayed in the column configuration
   defaultHidden?: boolean
 
@@ -444,14 +449,7 @@ export interface BasicColumn extends ColumnProps<Recordable> {
   editRow?: boolean
   editable?: boolean
   editComponent?: ComponentType
-  editComponentProps?:
-    | ((opt: {
-        text: string | number | boolean | Recordable
-        record: Recordable
-        column: BasicColumn
-        index: number
-      }) => Recordable)
-    | Recordable
+  editComponentProps?: Recordable
   editRule?: boolean | ((text: string, record: Recordable) => Promise<string>)
   editValueMap?: (value: any) => string
   onEditRow?: () => void
@@ -459,15 +457,8 @@ export interface BasicColumn extends ColumnProps<Recordable> {
   auth?: RoleEnum | RoleEnum[] | string | string[]
   // 业务控制是否显示
   ifShow?: boolean | ((column: BasicColumn) => boolean)
-  // 自定义修改后显示的内容
-  editRender?: (opt: {
-    text: string | number | boolean | Recordable
-    record: Recordable
-    column: BasicColumn
-    index: number
-  }) => VNodeChild | JSX.Element
-  // 动态 Disabled
-  editDynamicDisabled?: boolean | ((record: Recordable) => boolean)
+  //compType-用于记录类型
+  compType?: string
 }
 
 export type ColumnChangeParam = {

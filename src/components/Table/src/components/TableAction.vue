@@ -1,16 +1,22 @@
 <template>
   <div :class="[prefixCls, getAlign]" @click="onCellClick">
     <template v-for="(action, index) in getActions" :key="`${index}-${action.label}`">
-      <Tooltip v-if="action.tooltip" v-bind="getTooltip(action.tooltip)">
-        <PopConfirmButton v-bind="action">
+      <template v-if="action.slot">
+        <slot name="customButton"></slot>
+      </template>
+      <template v-else>
+        <Tooltip v-if="action.tooltip" v-bind="getTooltip(action.tooltip)">
+          <PopConfirmButton v-bind="action">
+            <Icon :icon="action.icon" :class="{ 'mr-1': !!action.label }" v-if="action.icon" />
+            <template v-if="action.label">{{ action.label }}</template>
+          </PopConfirmButton>
+        </Tooltip>
+        <PopConfirmButton v-else v-bind="action">
           <Icon :icon="action.icon" :class="{ 'mr-1': !!action.label }" v-if="action.icon" />
           <template v-if="action.label">{{ action.label }}</template>
         </PopConfirmButton>
-      </Tooltip>
-      <PopConfirmButton v-else v-bind="action">
-        <Icon :icon="action.icon" :class="{ 'mr-1': !!action.label }" v-if="action.icon" />
-        <template v-if="action.label">{{ action.label }}</template>
-      </PopConfirmButton>
+      </template>
+
       <Divider
         type="vertical"
         class="action-divider"
@@ -25,14 +31,13 @@
     >
       <slot name="more"></slot>
       <a-button type="link" size="small" v-if="!$slots.more">
-        <MoreOutlined class="icon-more" />
+        更多 <Icon icon="mdi-light:chevron-down" />
       </a-button>
     </Dropdown>
   </div>
 </template>
 <script lang="ts">
   import { defineComponent, PropType, computed, toRaw, unref } from 'vue'
-  import { MoreOutlined } from '@ant-design/icons-vue'
   import { Divider, Tooltip, TooltipProps } from 'ant-design-vue'
   import Icon from '/@/components/Icon/index'
   import { ActionItem, TableActionType } from '/@/components/Table'
@@ -47,7 +52,7 @@
 
   export default defineComponent({
     name: 'TableAction',
-    components: { Icon, PopConfirmButton, Divider, Dropdown, MoreOutlined, Tooltip },
+    components: { Icon, PopConfirmButton, Divider, Dropdown, Tooltip },
     props: {
       actions: {
         type: Array as PropType<ActionItem[]>,
@@ -104,6 +109,7 @@
       })
 
       const getDropdownList = computed((): any[] => {
+        //过滤掉隐藏的dropdown,避免出现多余的分割线
         const list = (toRaw(props.dropDownActions) || []).filter((action) => {
           return hasPermission(action.auth) && isIfShow(action)
         })
@@ -153,6 +159,9 @@
   .@{prefix-cls} {
     display: flex;
     align-items: center;
+    /* update-begin-author:taoyan date:2022-11-18 for: 表格默认行高比官方示例多出2px*/
+    height: 22px;
+    /* update-end-author:taoyan date:2022-11-18 for: 表格默认行高比官方示例多出2px*/
 
     .action-divider {
       display: table;

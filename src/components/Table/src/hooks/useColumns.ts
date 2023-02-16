@@ -1,7 +1,7 @@
 import type { BasicColumn, BasicTableProps, CellFormat, GetColumnsParams } from '../types/table'
 import type { PaginationProps } from '../types/pagination'
 import type { ComputedRef } from 'vue'
-import { computed, Ref, ref, reactive, toRaw, unref, watch } from 'vue'
+import { computed, Ref, ref, toRaw, unref, watch, reactive } from 'vue'
 import { renderEditCell } from '../components/editable'
 import { usePermission } from '/@/hooks/web/usePermission'
 import { useI18n } from '/@/hooks/web/useI18n'
@@ -86,14 +86,13 @@ function handleIndexColumn(
 }
 
 function handleActionColumn(propsRef: ComputedRef<BasicTableProps>, columns: BasicColumn[]) {
-  const { actionColumn } = unref(propsRef)
-  if (!actionColumn) return
+  const { actionColumn, showActionColumn } = unref(propsRef)
+  if (!actionColumn || !showActionColumn) return
 
   const hasIndex = columns.findIndex((column) => column.flag === ACTION_COLUMN_FLAG)
   if (hasIndex === -1) {
     columns.push({
       ...columns[hasIndex],
-      fixed: 'right',
       ...actionColumn,
       flag: ACTION_COLUMN_FLAG,
     })
@@ -152,13 +151,19 @@ export function useColumns(
         return hasPermission(column.auth) && isIfShow(column)
       })
       .map((column) => {
-        const { slots, customRender, format, edit, editRow, flag } = column
+        const { slots, customRender, format, edit, editRow, flag, title: metaTitle } = column
 
         if (!slots || !slots?.title) {
           // column.slots = { title: `header-${dataIndex}`, ...(slots || {}) };
-          column.customTitle = column.title
+          column.customTitle = column.title as string
           Reflect.deleteProperty(column, 'title')
         }
+        //update-begin-author:taoyan date:20211203 for:【online报表】分组标题显示错误，都显示成了联系信息 LOWCOD-2343
+        if (column.children) {
+          column.title = metaTitle
+        }
+        //update-end-author:taoyan date:20211203 for:【online报表】分组标题显示错误，都显示成了联系信息 LOWCOD-2343
+
         const isDefaultAction = [INDEX_COLUMN_FLAG, ACTION_COLUMN_FLAG].includes(flag!)
         if (!customRender && format && !edit && !isDefaultAction) {
           column.customRender = ({ text, record, index }) => {
@@ -193,6 +198,8 @@ export function useColumns(
       }
     })
   }
+
+  // update-begin--author:sunjianlei---date:20220523---for: 【VUEN-1089】合并vben最新版代码，解决表格字段排序问题
   /**
    * set columns
    * @param columnList key｜column
@@ -233,6 +240,7 @@ export function useColumns(
       columnsRef.value = newColumns
     }
   }
+  // update-end--author:sunjianlei---date:20220523---for: 【VUEN-1089】合并vben最新版代码，解决表格字段排序问题
 
   function getColumns(opt?: GetColumnsParams) {
     const { ignoreIndex, ignoreAction, sort } = opt || {}
@@ -298,7 +306,7 @@ export function formatCell(text: string, format: CellFormat, record: Recordable,
   try {
     // date type
     const DATE_FORMAT_PREFIX = 'date|'
-    if (isString(format) && format.startsWith(DATE_FORMAT_PREFIX) && text) {
+    if (isString(format) && format.startsWith(DATE_FORMAT_PREFIX)) {
       const dateFormat = format.replace(DATE_FORMAT_PREFIX, '')
 
       if (!dateFormat) {
