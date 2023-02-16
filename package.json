@@ -162,8 +162,8 @@
       "eslint "
     ],
     "*.vue": [
-      "eslint ",
-      "stylelint "
+      "eslint --fix",
+      "stylelint --fix"
     ],
     "*.{scss,less,styl,html}": [
       "stylelint "

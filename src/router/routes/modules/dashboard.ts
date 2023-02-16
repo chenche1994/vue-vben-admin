@@ -7,20 +7,27 @@ const dashboard: AppRouteModule = {
   path: '/dashboard',
   name: 'Dashboard',
   component: LAYOUT,
-  redirect: '/dashboard/workbench',
+  redirect: '/dashboard/todo',
   meta: {
-    hideChildrenInMenu: true,
     orderNo: 10,
     icon: 'ion:grid-outline',
     title: t('routes.dashboard.dashboard'),
   },
   children: [
     {
-      path: 'workbench',
-      name: 'Workbench',
-      component: () => import('/@/views/dashboard/workbench/index.vue'),
+      path: 'todo',
+      name: 'Todo',
+      component: () => import('/@/views/dashboard/todoList/index.vue'),
       meta: {
-        title: t('routes.dashboard.workbench'),
+        title: '待办列表',
+      },
+    },
+    {
+      path: 'done',
+      name: 'Done',
+      component: () => import('/@/views/dashboard/doneList/index.vue'),
+      meta: {
+        title: '已办列表',
       },
     },
   ],
