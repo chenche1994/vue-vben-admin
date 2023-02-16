@@ -12,7 +12,7 @@
 </template>
 <script setup>
   import { BasicModal, useModalInner } from '/@/components/Modal'
-  import FcDesigner from '/@/../lib/fc/index.es.js'
+  import FcDesigner from '@form-create/designer'
   import { ref } from 'vue'
   import { useMessage } from '/@/hooks/web/useMessage'
   const { createErrorModal } = useMessage()

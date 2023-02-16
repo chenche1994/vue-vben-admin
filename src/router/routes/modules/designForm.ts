@@ -9,7 +9,7 @@ const designForm: AppRouteModule = {
   component: LAYOUT,
   redirect: '/designForm/index',
   meta: {
-    icon: 'simple-icons:about-dot-me',
+    icon: 'ion:layers-outline',
     title: '工单流程设计',
     orderNo: 1000,
   },
@@ -20,7 +20,6 @@ const designForm: AppRouteModule = {
       component: () => import('/@/views/designForm/procedure/index.vue'),
       meta: {
         title: '流程管理',
-        icon: 'simple-icons:about-dot-me',
       },
     },
     {
@@ -29,7 +28,6 @@ const designForm: AppRouteModule = {
       component: () => import('/@/views/designForm/formList/index.vue'),
       meta: {
         title: '表单管理',
-        icon: 'simple-icons:about-dot-me',
       },
     },
   ],

@@ -2,8 +2,9 @@
   <div class="p-4">
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" preIcon="ant-design:import-outlined">新建流程</a-button>
-        <a-upload name="file" :showUploadList="false" :customRequest="onImportXls" />
+        <a-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls"
+          >新建流程</a-button
+        >
       </template>
     </BasicTable>
   </div>

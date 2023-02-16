@@ -8,7 +8,7 @@ const landAccount: AppRouteModule = {
   component: LAYOUT,
   redirect: '/landaccount/index',
   meta: {
-    icon: 'simple-icons:about-dot-me',
+    icon: 'ion:bar-chart-outline',
     title: '台账管理',
     orderNo: 1000,
   },
