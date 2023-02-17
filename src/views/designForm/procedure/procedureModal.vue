@@ -10,7 +10,7 @@
   </BasicModal>
 </template>
 <script setup>
-  import { ref, unref, computed } from 'vue'
+  import { ref, unref, computed, reactive } from 'vue'
   import { BasicModal, useModalInner } from '/@/components/Modal'
   import { BasicForm, useForm } from '/@/components/Form/index'
   import { basicFormSchema } from './procedure.data'
@@ -41,19 +41,29 @@
   const [registerForm, { validate, setFieldsValue, resetFields }] = useForm({
     labelWidth: 100,
     baseColProps: { span: 24 },
-    schemas: basicFormSchema,
+    schemas: basicFormSchema(beforeUpload),
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
     },
   })
+  const formData = reactive(new FormData())
+  function beforeUpload(file) {
+    formData.append('xmlFile', file)
+    return false //中断上传
+  }
   // 提交
   async function handleSubmit() {
     try {
       setModalProps({ confirmLoading: true })
+
       let values = await validate()
+
+      Object.keys(values).forEach((key) => {
+        formData.append(key, values[key])
+      })
       //提交表单
-      await apiDeployProcedure({ ...values, id: rowId.value }, isUpdate.value)
+      await apiDeployProcedure(formData, isUpdate.value)
       closeModal() // 关闭表单
       emit('success')
     } finally {

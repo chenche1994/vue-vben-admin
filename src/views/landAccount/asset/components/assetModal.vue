@@ -21,11 +21,11 @@
   </BasicModal>
 </template>
 <script setup>
-  import { ref, unref, computed, onMounted, watch } from 'vue'
+  import { ref, unref, computed } from 'vue'
   import { CollapseContainer } from '/@/components/Container'
   import { BasicModal, useModalInner } from '/@/components/Modal'
   import { BasicForm, useForm } from '/@/components/Form/index'
-  import { basicFormSchema } from '../asset.data'
+  import { basicFormSchema, priceFormSchema } from '../asset.data'
   import { saveOrUpdateAsset } from '../asset.api'
 
   const props = defineProps({
@@ -38,36 +38,6 @@
   const title = computed(() => (isUpdate.value ? '编辑' : '新增'))
 
   const rowId = ref('')
-
-  onMounted(() => {
-    // 更新资产分类数据
-    watch(
-      () => props.rootTreeData,
-      () => {
-        updateSchema([
-          {
-            field: 'categoryId',
-            componentProps: { treeData: props.rootTreeData },
-          },
-        ])
-      },
-    )
-  })
-  // 注册model
-  const [registerModal, { closeModal, setModalProps }] = useModalInner(async (data) => {
-    resetFields()
-    resetPrice()
-    setModalProps({ confirmLoading: false })
-    isUpdate.value = !!data?.isUpdate
-    if (unref(isUpdate)) {
-      setFieldsValue({
-        // 设置回显值
-        ...data.record,
-      })
-      setPriceField({ ...data.record })
-      rowId.value = data.record.id
-    }
-  })
 
   // 注册基本信息表单
   const [registerBasicInfo, { validate, setFieldsValue, resetFields, updateSchema }] = useForm({
@@ -86,11 +56,35 @@
   ] = useForm({
     labelWidth: 100,
     baseColProps: { span: 6 },
-    schemas: [],
+    schemas: priceFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
     },
+  })
+
+  // 注册model
+  const [registerModal, { closeModal, setModalProps }] = useModalInner(async (data) => {
+    resetFields()
+    resetPrice()
+    setModalProps({ confirmLoading: false })
+    isUpdate.value = !!data?.isUpdate
+    if (unref(isUpdate)) {
+      setFieldsValue({
+        // 设置回显值
+        ...data.record,
+      })
+      setPriceField({ ...data.record })
+      rowId.value = data.record.id
+    }
+    if (Array.isArray(props.rootTreeData)) {
+      updateSchema([
+        {
+          field: 'categoryId',
+          componentProps: { treeData: props.rootTreeData },
+        },
+      ])
+    }
   })
 
   // 提交

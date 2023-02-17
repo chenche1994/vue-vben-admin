@@ -168,7 +168,7 @@ export const basicFormSchema: FormSchema[] = [
         parameter: 'increaseMethod',
       },
     },
-    // required: true,
+    required: true,
   },
   {
     label: '资产分类',
@@ -178,16 +178,17 @@ export const basicFormSchema: FormSchema[] = [
       treeData: [],
       fieldNames: { label: 'name', value: 'id', children: 'subList' },
     },
-    // required: true,
+    required: true,
   },
   {
     label: '位置',
-    field: 'areaName',
+    field: 'areaId',
     component: 'ApiTreeSelect',
     componentProps: {
       api: apiGetAreaTree,
+      fieldNames: { label: 'name', value: 'id', children: 'subList' },
     },
-    // required: true,
+    required: true,
   },
   {
     label: '规格型号',
@@ -237,7 +238,7 @@ export const basicFormSchema: FormSchema[] = [
   {
     label: '质保期',
     field: 'warrantyStartDate',
-    component: 'DatePicker',
+    component: 'RangePicker',
   },
   {
     label: '质保天数',
@@ -346,5 +347,67 @@ export const basicFormSchema: FormSchema[] = [
         parameter: 'depreciationStatus',
       },
     },
+  },
+]
+
+export const priceFormSchema: FormSchema[] = [
+  {
+    label: '资产原值',
+    field: 'initialAsset',
+    component: 'Input',
+  },
+  {
+    label: '累计折旧',
+    field: 'cumulativeDiscount',
+    component: 'Input',
+  },
+  {
+    label: '本月折旧',
+    field: 'monthDiscount',
+    component: 'Input',
+  },
+  {
+    label: '折旧年限',
+    field: 'discountYears',
+    component: 'Input',
+  },
+  {
+    label: '折旧方法',
+    field: 'depreciationStatus',
+    component: 'ApiSelect',
+    componentProps: {
+      api: apiGetDictByKey,
+      resultField: 'itemList',
+      labelField: 'name',
+      valueField: 'name',
+      params: {
+        parameter: 'depreciationStatus',
+      },
+    },
+  },
+  {
+    label: '本年折旧',
+    field: 'yearDiscount',
+    component: 'Input',
+  },
+  {
+    label: '资产净值',
+    field: 'netAsset',
+    component: 'Input',
+  },
+  {
+    label: '残值',
+    field: 'residualAsset',
+    component: 'Input',
+  },
+  {
+    label: '残值率',
+    field: 'residualRatio',
+    component: 'Input',
+  },
+  {
+    label: '建卡日期',
+    field: 'cardCreateDate',
+    component: 'DatePicker',
   },
 ]

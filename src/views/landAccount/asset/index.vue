@@ -57,6 +57,7 @@
       width: 120,
       title: '操作',
       dataIndex: 'action',
+      fixed: 'right',
     },
     formConfig: {
       labelWidth: 80,

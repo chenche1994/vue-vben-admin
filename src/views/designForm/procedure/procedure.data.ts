@@ -24,7 +24,7 @@ export const columns: BasicColumn[] = [
   },
 ]
 
-export const basicFormSchema: FormSchema[] = [
+export const basicFormSchema = (beforeUploadCallback): FormSchema[] => [
   {
     field: 'name',
     label: '流程名称',
@@ -41,5 +41,9 @@ export const basicFormSchema: FormSchema[] = [
     field: 'file',
     label: '上传',
     component: 'JUpload',
+    componentProps: {
+      beforeUpload: (file) => beforeUploadCallback(file),
+      value: '',
+    },
   },
 ]

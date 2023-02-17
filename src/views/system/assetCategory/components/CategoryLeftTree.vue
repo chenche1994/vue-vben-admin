@@ -84,11 +84,7 @@
       </template>
       <a-empty v-else description="暂无数据" />
     </a-spin>
-    <CategoryFormModal
-      :rootTreeData="treeData"
-      @register="registerModal"
-      @success="loadRootTreeData"
-    />
+    <CategoryFormModal @register="registerModal" @success="loadRootTreeData" />
   </a-card>
 </template>
 
@@ -98,7 +94,7 @@
   import { useMessage } from '/@/hooks/web/useMessage'
   import CategoryFormModal from './CategoryFormModal.vue'
   import { Popconfirm } from 'ant-design-vue'
-  import { Api, apiGetAssetCategorList, apiDelAssetCategory } from '../assetCategory.api'
+  import { Api, apiGetAssetCategoryTree, apiDelAssetCategory } from '../assetCategory.api'
   import { useMethods } from '/@/hooks/system/useMethods'
   const emit = defineEmits(['select', 'rootTreeData'])
   const { createMessage } = useMessage()
@@ -141,7 +137,9 @@
   watch(searchKeyword, (value) => {
     const expanded = treeData.value
       .map((item) => {
-        if (item.title.indexOf(value) > -1) {
+        console.log(item)
+
+        if (item.name.indexOf(value) > -1) {
           return getParentKey(item.key, treeData.value)
         }
         return null
@@ -159,11 +157,11 @@
     try {
       loading.value = true
       treeData.value = []
-      const { list: result } = await apiGetAssetCategorList({ pageIndex: 1, pageSize: 10 })
-      if (Array.isArray(result)) {
-        treeData.value = result
+      const data = await apiGetAssetCategoryTree({})
+      if (Array.isArray(data)) {
+        treeData.value = data
       } else {
-        treeData.value = [result]
+        treeData.value = [data]
       }
       if (expandedKeys.value.length === 0) {
         autoExpandParentNode()
