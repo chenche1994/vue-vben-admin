@@ -1,5 +1,5 @@
 import type { NamePath, RuleObject } from 'ant-design-vue/lib/form/interface'
-import type { VNode } from 'vue'
+import type { VNode, ComputedRef } from 'vue'
 import type { ButtonProps as AntdButtonProps } from '/@/components/Button'
 import type { FormItem } from './formItem'
 import type { ColEx, ComponentType } from './index'
@@ -7,7 +7,8 @@ import type { TableActionType } from '/@/components/Table/src/types/table'
 import type { CSSProperties } from 'vue'
 import type { RowProps } from 'ant-design-vue/lib/grid/Row'
 
-export type FieldMapToTime = [string, [string, string], (string | [string, string])?][]
+export type FieldMapToTime = [string, [string, string], string?][]
+export type FieldMapToNumber = [string, [string, string]][]
 
 export type Rule = RuleObject & {
   trigger?: 'blur' | 'change' | ['change', 'blur']
@@ -33,9 +34,10 @@ export interface FormActionType {
   updateSchema: (data: Partial<FormSchema> | Partial<FormSchema>[]) => Promise<void>
   resetSchema: (data: Partial<FormSchema> | Partial<FormSchema>[]) => Promise<void>
   setProps: (formProps: Partial<FormProps>) => Promise<void>
-  removeSchemaByField: (field: string | string[]) => Promise<void>
+  getProps: ComputedRef<Partial<FormProps>>
+  removeSchemaByFiled: (field: string | string[]) => Promise<void>
   appendSchemaByField: (
-    schema: FormSchema | FormSchema[],
+    schema: FormSchema,
     prefixField: string | undefined,
     first?: boolean | undefined,
   ) => Promise<void>
@@ -49,20 +51,17 @@ export type RegisterFn = (formInstance: FormActionType) => void
 export type UseFormReturnType = [RegisterFn, FormActionType]
 
 export interface FormProps {
-  name?: string
   layout?: 'vertical' | 'inline' | 'horizontal'
   // Form value
   model?: Recordable
   // The width of all items in the entire form
   labelWidth?: number | string
-  // alignment
+  //alignment
   labelAlign?: 'left' | 'right'
-  // Row configuration for the entire form
+  //Row configuration for the entire form
   rowProps?: RowProps
   // Submit form on reset
   submitOnReset?: boolean
-  // Submit form on form changing
-  submitOnChange?: boolean
   // Col configuration for the entire form
   labelCol?: Partial<ColEx>
   // Col configuration for the entire form
@@ -88,21 +87,23 @@ export interface FormProps {
   disabled?: boolean
   // Time interval fields are mapped into multiple
   fieldMapToTime?: FieldMapToTime
+  // number interval fields are mapped into multiple
+  fieldMapToNumber?: FieldMapToNumber
   // Placeholder is set automatically
   autoSetPlaceHolder?: boolean
   // Auto submit on press enter on input
   autoSubmitOnEnter?: boolean
   // Check whether the information is added to the label
   rulesMessageJoinLabel?: boolean
-  // Whether to show collapse and expand buttons
+  // 是否显示展开收起按钮
   showAdvancedButton?: boolean
   // Whether to focus on the first input box, only works when the first form item is input
   autoFocusFirstItem?: boolean
-  // Automatically collapse over the specified number of rows
-  autoAdvancedLine?: number
-
+  // 【jeecg】如果 showAdvancedButton 为 true，超过指定列数默认折叠，默认为3
   autoAdvancedCol?: number
-  // Always show lines
+  // 如果 showAdvancedButton 为 true，超过指定行数行默认折叠
+  autoAdvancedLine?: number
+  // 折叠时始终保持显示的行数
   alwaysShowLines?: number
   // Whether to show the operation button
   showActionButtonGroup?: boolean
@@ -177,10 +178,6 @@ export interface FormSchema {
 
   // 默认值
   defaultValue?: any
-
-  // 是否自动处理与时间相关组件的默认值
-  isHandleDateDefaultValue?: boolean
-
   isAdvanced?: boolean
 
   // Matching details components
@@ -211,6 +208,12 @@ export interface FormSchema {
   dynamicDisabled?: boolean | ((renderCallbackParams: RenderCallbackParams) => boolean)
 
   dynamicRules?: (renderCallbackParams: RenderCallbackParams) => Rule[]
+
+  // 这个属性自定义的 用于自定义的业务 比如在表单打开的时候修改表单的禁用状态，但是又不能重写componentProps，因为他的内容太多了，所以使用dynamicDisabled和buss实现
+  buss?: any
+
+  //label字数控制（label宽度）
+  labelLength?: number
 }
 export interface HelpComponentProps {
   maxWidth: string
