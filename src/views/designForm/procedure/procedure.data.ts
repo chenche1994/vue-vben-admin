@@ -38,11 +38,8 @@ export const basicFormSchema: FormSchema[] = [
     required: true,
   },
   {
-    field: 'memo',
-    label: '备注',
-    component: 'InputTextArea',
-    componentProps: {
-      placeholder: '请输入备注',
-    },
+    field: 'file',
+    label: '上传',
+    component: 'JUpload',
   },
 ]

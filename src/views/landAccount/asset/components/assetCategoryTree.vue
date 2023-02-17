@@ -27,7 +27,7 @@
       const treeData = ref<TreeItem[]>([])
 
       async function fetch() {
-        const data = (await apiGetAssetCategoryTree({ id: 0 })) as unknown as TreeItem[]
+        const data = (await apiGetAssetCategoryTree({})) as unknown as TreeItem[]
         if (Array.isArray(data)) {
           treeData.value = data
         } else {

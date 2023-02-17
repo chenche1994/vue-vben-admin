@@ -86,7 +86,7 @@
   ] = useForm({
     labelWidth: 100,
     baseColProps: { span: 6 },
-    schemas: basicFormSchema,
+    schemas: [],
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
@@ -98,9 +98,13 @@
     try {
       setModalProps({ confirmLoading: true })
       let values = await validate()
+      // setFieldsValue({ })
       let valuesPrice = await validatePrice()
       //提交表单
-      await saveOrUpdateAsset({ ...values, ...valuesPrice, id: rowId.value }, isUpdate.value)
+      await saveOrUpdateAsset(
+        { ...values, ...valuesPrice, id: rowId.value, categoryId: 1, areaId: 1 },
+        isUpdate.value,
+      )
       closeModal() // 关闭表单
       emit('success')
     } finally {

@@ -2,7 +2,7 @@
   <BasicModal
     v-bind="$attrs"
     @register="registerModal"
-    :title="`区域${title}`"
+    :title="`流程${title}`"
     @ok="handleSubmit"
     showFooter
   >
@@ -14,7 +14,7 @@
   import { BasicModal, useModalInner } from '/@/components/Modal'
   import { BasicForm, useForm } from '/@/components/Form/index'
   import { basicFormSchema } from './procedure.data'
-  // import { Api } from './procedure.api'
+  import { apiDeployProcedure } from './procedure.api'
   // 声明Emits
   const emit = defineEmits(['success', 'register'])
 
@@ -53,7 +53,7 @@
       setModalProps({ confirmLoading: true })
       let values = await validate()
       //提交表单
-      await saveOrUpdateArea({ ...values, id: rowId.value }, isUpdate.value)
+      await apiDeployProcedure({ ...values, id: rowId.value }, isUpdate.value)
       closeModal() // 关闭表单
       emit('success')
     } finally {

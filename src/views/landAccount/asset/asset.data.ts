@@ -161,14 +161,14 @@ export const basicFormSchema: FormSchema[] = [
     component: 'ApiSelect',
     componentProps: {
       api: apiGetDictByKey,
-      resultField: 'list.itemList',
+      resultField: 'itemList',
       labelField: 'name',
       valueField: 'name',
       params: {
         parameter: 'increaseMethod',
       },
     },
-    required: true,
+    // required: true,
   },
   {
     label: '资产分类',
@@ -176,8 +176,9 @@ export const basicFormSchema: FormSchema[] = [
     component: 'TreeSelect',
     componentProps: {
       treeData: [],
+      fieldNames: { label: 'name', value: 'id', children: 'subList' },
     },
-    required: true,
+    // required: true,
   },
   {
     label: '位置',
@@ -186,7 +187,7 @@ export const basicFormSchema: FormSchema[] = [
     componentProps: {
       api: apiGetAreaTree,
     },
-    required: true,
+    // required: true,
   },
   {
     label: '规格型号',
@@ -325,7 +326,7 @@ export const basicFormSchema: FormSchema[] = [
     componentProps: {
       api: apiGetDictByKey,
       params: {
-        pageIndex: 1,
+        parameter: 1,
       },
       resultField: 'itemList',
       labelField: 'name',

@@ -17,6 +17,11 @@
                 onClick: handleEdit.bind(null, record),
               },
               {
+                icon: 'clarity:note-edit-line',
+                tooltip: '查看二维码',
+                onClick: handleOpenQr.bind(null, record),
+              },
+              {
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
                 tooltip: '删除',
@@ -27,6 +32,7 @@
         </template>
       </template>
     </BasicTable>
+    <AssetQrModal @register="registerQrModal" />
     <AssetModal @register="registerModal" @success="handleSuccess" :rootTreeData="rootTreeData" />
   </PageWrapper>
 </template>
@@ -35,6 +41,7 @@
   import { PageWrapper } from '/@/components/Page'
   import { BasicTable, useTable, TableAction } from '/@/components/Table'
   import AssetCategoryTree from './components/assetCategoryTree.vue'
+  import AssetQrModal from './components/assetQrModal.vue'
   import AssetModal from './components/assetModal.vue'
   import { useModal } from '/@/components/Modal'
   import { apiGetAssetList, apiDelAsset } from './asset.api'
@@ -64,6 +71,7 @@
     bordered: true,
   })
   const [registerModal, { openModal }] = useModal()
+  const [registerQrModal, { openModal: openQrModal }] = useModal()
   // 编辑
   function handleEdit(record) {
     openModal(true, {
@@ -87,7 +95,10 @@
   function handleSuccess() {
     reload()
   }
-
+  // 查看二维码
+  function handleOpenQr(record) {
+    openQrModal(true, { record })
+  }
   // 左侧树rootTreeData触发
   function onRootTreeData(data) {
     rootTreeData.value = data
