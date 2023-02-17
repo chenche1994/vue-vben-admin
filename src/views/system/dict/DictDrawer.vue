@@ -78,7 +78,6 @@
   async function handleSubmit() {
     try {
       setDrawerProps({ confirmLoading: true })
-      debugger
       setFieldsValue({
         itemList: itemList,
       })

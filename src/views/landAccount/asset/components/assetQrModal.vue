@@ -2,12 +2,13 @@
   <BasicModal
     v-bind="$attrs"
     @register="registerModal"
-    :title="``"
+    :title="`查看二维码`"
     @ok="handleSubmit"
     showFooter
     width="300px"
+    :bodyStyle="{ 'text-align': 'center' }"
   >
-    <div>{{ assetCode }}</div>
+    <div>编码：{{ assetCode }}</div>
     <QrCode
       :value="qrCodeText"
       :width="200"
@@ -34,15 +35,16 @@
     qrCodeText.value = JSON.stringify({ name, code })
   })
 
-  function getQrUrl(url) {
+  function getQrUrl({ url }) {
     assetQrUrl.value = url
   }
   // 二维码打印
   function printQr() {
+    console.log(assetQrUrl.value)
     printJS({
       printable: [assetQrUrl.value],
       type: 'image',
-      header: assetCode,
+      header: assetCode.value,
     })
   }
   // 提交

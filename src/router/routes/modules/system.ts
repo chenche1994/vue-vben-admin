@@ -86,6 +86,15 @@ const system: AppRouteModule = {
       },
       component: () => import('/@/views/system/part/index.vue'),
     },
+    {
+      path: 'dict',
+      name: 'Dict',
+      meta: {
+        title: '数据字典',
+        ignoreKeepAlive: true,
+      },
+      component: () => import('/@/views/system/dict/index.vue'),
+    },
   ],
 }
 

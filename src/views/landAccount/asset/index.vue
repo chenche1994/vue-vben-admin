@@ -17,7 +17,7 @@
                 onClick: handleEdit.bind(null, record),
               },
               {
-                icon: 'clarity:note-edit-line',
+                icon: 'ant-design:qrcode-outlined',
                 tooltip: '查看二维码',
                 onClick: handleOpenQr.bind(null, record),
               },
@@ -54,7 +54,7 @@
     api: apiGetAssetList,
     columns,
     actionColumn: {
-      width: 80,
+      width: 120,
       title: '操作',
       dataIndex: 'action',
     },
