@@ -11,6 +11,9 @@ export function apiGetProcedureList(params) {
   return defHttp.post({ url: Api.List, params })
 }
 
-export function apiDeployProcedure(params) {
-  return defHttp.post({ url: Api.Deploy, params })
+export function apiDeployProcedure(values, params) {
+  return defHttp.post({ url: `${Api.Deploy}?key=${values.key}&name=${values.name}`, params })
+}
+export function apiGetProcedureNode(params) {
+  return defHttp.post({ url: Api.GetElement, params })
 }

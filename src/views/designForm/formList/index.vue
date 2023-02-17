@@ -2,7 +2,7 @@
   <div class="p-4">
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="openDesignModal()"> 新增 </a-button>
+        <a-button type="primary" @click="openModal()"> 新增 </a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -14,6 +14,7 @@
       </template>
     </BasicTable>
     <DesignModel @register="registerDesignModal" @success="handleSuccess" />
+    <FormCreateModal @register="registerModal" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -22,6 +23,7 @@
   import { demoListApi } from '/@/api/demo/table'
   import { useModal } from '/@/components/Modal'
   import DesignModel from '../components/designModel.vue'
+  import FormCreateModal from './FormCreateModal.vue'
   import { apiCreateForm } from './formlist.api'
   // 注册表格
   const [registerTable] = useTable({
@@ -37,6 +39,9 @@
   })
   // 注册表单设计器弹窗
   const [registerDesignModal, { openModal: openDesignModal }] = useModal()
+
+  // 注册表单创建器弹窗
+  const [registerModal, { openModal }] = useModal()
 
   /**
    * 操作栏
@@ -58,10 +63,6 @@
     return [
       {
         label: '分配处理人/组',
-        onClick: registerDesignModal.bind(null, record),
-      },
-      {
-        label: '分配流程节点',
         onClick: registerDesignModal.bind(null, record),
       },
     ]
