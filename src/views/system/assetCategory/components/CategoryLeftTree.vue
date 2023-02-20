@@ -12,16 +12,9 @@
           >导入</a-button
         >
       </a-upload>
-      <template v-if="checkedKeys.length > 0">
-        <a-dropdown>
-          <template #overlay>
-            <a-menu>
-              <a-menu-item key="1" @click="onDeleteBatch">删除</a-menu-item>
-            </a-menu>
-          </template>
-          <a-button> 批量操作 </a-button>
-        </a-dropdown>
-      </template>
+      <a-button type="primary" preIcon="ant-design:delete-outlined" @click="onDelete"
+        >删除</a-button
+      >
     </div>
     <a-alert type="info" show-icon class="alert" style="margin-bottom: 8px">
       <template #message>
@@ -45,7 +38,6 @@
       <template v-if="treeData.length > 0">
         <a-tree
           v-if="!treeReloading"
-          checkable
           :clickRowToExpand="false"
           :treeData="treeData"
           :selectedKeys="selectedKeys"
@@ -55,32 +47,7 @@
           v-model:expandedKeys="expandedKeys"
           @check="onCheck"
           @select="onSelect"
-        >
-          <template #title="{ key: treeKey, name, dataRef }">
-            <a-dropdown :trigger="['contextmenu']">
-              <Popconfirm
-                :visible="visibleTreeKey === treeKey"
-                title="确定要删除吗？"
-                ok-text="确定"
-                cancel-text="取消"
-                placement="rightTop"
-                @confirm="onDelete(dataRef)"
-                @visible-change="onVisibleChange"
-              >
-                <span>{{ name }}</span>
-              </Popconfirm>
-
-              <template #overlay>
-                <a-menu>
-                  <a-menu-item key="1" @click="onAddChildCategory(dataRef)">添加子级</a-menu-item>
-                  <a-menu-item key="2" @click="visibleTreeKey = treeKey">
-                    <span style="color: red">删除</span>
-                  </a-menu-item>
-                </a-menu>
-              </template>
-            </a-dropdown>
-          </template>
-        </a-tree>
+        />
       </template>
       <a-empty v-else description="暂无数据" />
     </a-spin>
@@ -89,11 +56,10 @@
 </template>
 
 <script lang="ts" setup>
-  import { nextTick, ref, unref, defineExpose, watch } from 'vue'
+  import { nextTick, ref, defineExpose, watch } from 'vue'
   import { useModal } from '/@/components/Modal'
   import { useMessage } from '/@/hooks/web/useMessage'
   import CategoryFormModal from './CategoryFormModal.vue'
-  import { Popconfirm } from 'ant-design-vue'
   import { Api, apiGetAssetCategoryTree, apiDelAssetCategory } from '../assetCategory.api'
   import { useMethods } from '/@/hooks/system/useMethods'
   const emit = defineEmits(['select', 'rootTreeData'])
@@ -115,8 +81,6 @@
   const checkStrictly = ref<boolean>(true)
   // 当前选中的资产类目
   const currentCategory = ref<any>(null)
-  // 控制确认删除提示框是否显示
-  const visibleTreeKey = ref<any>(null)
   // 搜索关键字
   const searchKeyword = ref('')
 
@@ -258,39 +222,13 @@
    * @param idListRef array
    * @param confirm 是否显示确认提示框
    */
-  async function doDeleteCategory(idListRef, confirm = true) {
-    const idList = unref(idListRef)
-    if (idList.length > 0) {
-      try {
-        loading.value = true
-        await apiDelAssetCategory({ idList: idList }, confirm)
-        await loadRootTreeData()
-      } finally {
-        loading.value = false
-      }
-    }
-  }
-
-  // 删除单个
-  async function onDelete(data) {
-    if (data) {
-      onVisibleChange(false)
-      doDeleteCategory(data.id, false)
-    }
-  }
-
-  // 批量删除
-  async function onDeleteBatch() {
+  async function onDelete(confirm = true) {
     try {
-      await doDeleteCategory(checkedKeys)
-      checkedKeys.value = []
+      loading.value = true
+      await apiDelAssetCategory({ idList: currentCategory.value.id }, confirm)
+      await loadRootTreeData()
     } finally {
-    }
-  }
-
-  function onVisibleChange(visible) {
-    if (!visible) {
-      visibleTreeKey.value = null
+      loading.value = false
     }
   }
 

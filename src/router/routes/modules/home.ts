@@ -16,7 +16,7 @@ const home: AppRouteModule = {
   children: [
     {
       path: 'index',
-      name: 'Index',
+      name: 'HomeIndex',
       component: () => import('/@/views/home/index.vue'),
       meta: {
         title: '首页',

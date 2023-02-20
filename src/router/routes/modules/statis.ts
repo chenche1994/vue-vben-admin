@@ -16,7 +16,7 @@ const home: AppRouteModule = {
   children: [
     {
       path: 'index',
-      name: 'Index',
+      name: 'StatIndex',
       component: () => import('/@/views/statis/analysis/index.vue'),
       meta: {
         title: '统计分析',

@@ -42,7 +42,6 @@
 
   // 左侧树选择后触发
   function onTreeSelect(data) {
-    console.log('onTreeSelect: ', data)
     departData.value = data
   }
 

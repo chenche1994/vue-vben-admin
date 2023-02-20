@@ -11,9 +11,9 @@
 </template>
 
 <script lang="ts" setup>
-  import { watch, ref, unref, onMounted } from 'vue'
+  import { watch, ref, onMounted } from 'vue'
   import { BasicForm, useForm } from '/@/components/Form/index'
-  import { saveOrUpdateOrg } from '/@/api/sys/org'
+  import { saveOrUpdateAssetCategory } from '../assetCategory.api'
   import { basicFormSchema } from '../assetCategory.data'
 
   const emit = defineEmits(['success'])
@@ -40,18 +40,42 @@
     watch(
       () => props.data,
       async () => {
-        let record = unref(props.data)
-        if (typeof record !== 'object') {
-          record = {}
+        model.value = {
+          name: props.data.name,
+          code: props.data.code,
+          ...getModalInfo(),
         }
-        model.value = record
+
         await resetFields()
-        await setFieldsValue({ ...record })
+        await setFieldsValue({ ...model.value })
+      },
+      { deep: true, immediate: true },
+    )
+
+    watch(
+      () => props.rootTreeData,
+      async () => {
+        if (props.data.id) {
+          const record = {
+            ...getModalInfo(),
+          }
+          setFieldsValue({ ...record })
+        }
       },
       { deep: true, immediate: true },
     )
   })
 
+  // 设置表单其他类目信息
+  function getModalInfo() {
+    const formInfo = searchParent(props.rootTreeData, props.data.id)
+    return {
+      first: formInfo[0]?.name,
+      second: formInfo[1]?.name,
+      third: formInfo[2]?.name,
+      fourth: formInfo[3]?.name,
+    }
+  }
   // 重置表单
   async function onReset() {
     await resetFields()
@@ -63,14 +87,43 @@
     try {
       loading.value = true
       let values = await validate()
-      values = Object.assign({}, model.value, values)
       //提交表单
-      await saveOrUpdateOrg(values, isUpdate.value)
+      await saveOrUpdateAssetCategory({ name: values.name, id: props.data.id }, isUpdate.value)
       //刷新列表
       emit('success')
       Object.assign(model.value, values)
     } finally {
       loading.value = false
     }
+  }
+
+  // 根据树节点返回它在整个树的路径
+  /**
+   *
+   * @param {树结构} map
+   * @param {节点值} node id
+   * @param {树节点属性的转换，children：树的子节点，key：节点值对应的属性} vauleKey
+   * @returns
+   */
+  function searchParent(map, node, vauleKey = { children: 'subList', key: 'id' }): any[] {
+    let t: any[] = []
+    for (let i = 0; i < map.length; i++) {
+      const e = map[i]
+      if (e[vauleKey.key] === node) {
+        //若查询到对应的节点，则直接返回
+        t.push(e)
+        break
+      } else if (e[vauleKey.children] && e[vauleKey.children].length !== 0) {
+        //判断是否还有子节点，若有对子节点进行循环调用
+        let p = searchParent(e[vauleKey.children], node, vauleKey)
+        //若p的长度不为0，则说明子节点在该节点的children内，记录此节点，并终止循环
+        if (p.length !== 0) {
+          p.unshift(e)
+          t = p
+          break
+        }
+      }
+    }
+    return t
   }
 </script>
