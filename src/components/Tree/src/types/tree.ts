@@ -10,6 +10,7 @@ export enum ToolbarEnum {
   UN_EXPAND_ALL,
   CHECK_STRICTLY,
   CHECK_UN_STRICTLY,
+  RESET,
 }
 
 export const treeEmits = [
@@ -19,6 +20,7 @@ export const treeEmits = [
   'change',
   'check',
   'update:searchValue',
+  'reset',
 ]
 
 export interface TreeState {

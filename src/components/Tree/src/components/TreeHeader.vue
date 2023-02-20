@@ -80,7 +80,7 @@
       default: undefined,
     },
   } as const)
-  const emit = defineEmits(['strictly-change', 'search'])
+  const emit = defineEmits(['strictly-change', 'search', 'reset'])
 
   const slots = useSlots()
   const { t } = useI18n()
@@ -99,23 +99,27 @@
   const toolbarList = computed(() => {
     const { checkable } = props
     const defaultToolbarList = [
-      { label: t('component.tree.expandAll'), value: ToolbarEnum.EXPAND_ALL },
       {
-        label: t('component.tree.unExpandAll'),
-        value: ToolbarEnum.UN_EXPAND_ALL,
+        label: t('component.tree.unSelectAll'),
+        value: ToolbarEnum.RESET,
         divider: checkable,
       },
     ]
 
     return checkable
       ? [
+          { label: t('component.tree.expandAll'), value: ToolbarEnum.EXPAND_ALL },
+          {
+            label: t('component.tree.unExpandAll'),
+            value: ToolbarEnum.UN_EXPAND_ALL,
+            divider: checkable,
+          },
           { label: t('component.tree.selectAll'), value: ToolbarEnum.SELECT_ALL },
           {
             label: t('component.tree.unSelectAll'),
             value: ToolbarEnum.UN_SELECT_ALL,
             divider: checkable,
           },
-          ...defaultToolbarList,
           { label: t('component.tree.checkStrictly'), value: ToolbarEnum.CHECK_STRICTLY },
           { label: t('component.tree.checkUnStrictly'), value: ToolbarEnum.CHECK_UN_STRICTLY },
         ]
@@ -142,6 +146,8 @@
         break
       case ToolbarEnum.CHECK_UN_STRICTLY:
         emit('strictly-change', true)
+      case ToolbarEnum.RESET:
+        emit('reset')
         break
     }
   }

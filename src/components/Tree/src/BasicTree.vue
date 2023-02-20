@@ -172,6 +172,11 @@
         state.checkStrictly = strictly
       }
 
+      function onReset() {
+        setSelectedKeys([])
+        emit('reset')
+      }
+
       watch(
         () => props.searchValue,
         (val) => {
@@ -409,6 +414,7 @@
                 onStrictlyChange={onStrictlyChange}
                 onSearch={handleSearch}
                 searchText={searchState.searchText}
+                onReset={onReset}
               >
                 {extendSlots(slots)}
               </TreeHeader>

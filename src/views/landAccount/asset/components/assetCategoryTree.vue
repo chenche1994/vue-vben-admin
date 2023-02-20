@@ -9,6 +9,7 @@
       :treeData="treeData"
       :fieldNames="{ key: 'id', title: 'name', children: 'subList' }"
       @select="handleSelect"
+      @reset="handleSelect([])"
     />
   </div>
 </template>
@@ -39,7 +40,6 @@
       function handleSelect(keys) {
         emit('select', keys[0])
       }
-
       onMounted(() => {
         fetch()
       })

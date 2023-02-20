@@ -1,6 +1,10 @@
 import { BasicColumn } from '/@/components/Table/src/types/table'
 import { FormSchema } from '/@/components/Form'
-import { apiGetDictByKey, apiGetAreaTree } from '/@/api'
+import { apiGetDictByKey, apiGetEmployeeList, apiGetEmployeeInfo } from '/@/api'
+import dayjs from 'dayjs'
+import { useUserStore } from '/@/store/modules/user'
+const userInfo = useUserStore().getUserInfo
+
 // 表格页
 export const columns: BasicColumn[] = [
   {
@@ -128,17 +132,29 @@ export const searchFormSchema: FormSchema[] = [
   {
     field: 'areaId',
     label: '位置',
-    component: 'Input',
+    component: 'TreeSelect',
+    componentProps: {
+      treeData: [],
+      fieldNames: { label: 'name', value: 'id', children: 'subList' },
+    },
   },
   {
     field: 'proprietorDept',
     label: '归属部门',
-    component: 'Input',
+    component: 'TreeSelect',
+    componentProps: {
+      treeData: [],
+      fieldNames: { label: 'name', value: 'id', children: 'subList' },
+    },
   },
   {
     field: 'operateDept',
     label: '使用部门',
-    component: 'Input',
+    component: 'TreeSelect',
+    componentProps: {
+      treeData: [],
+      fieldNames: { label: 'name', value: 'id', children: 'subList' },
+    },
   },
 ]
 
@@ -183,9 +199,9 @@ export const basicFormSchema: FormSchema[] = [
   {
     label: '位置',
     field: 'areaId',
-    component: 'ApiTreeSelect',
+    component: 'TreeSelect',
     componentProps: {
-      api: apiGetAreaTree,
+      treeData: [],
       fieldNames: { label: 'name', value: 'id', children: 'subList' },
     },
     required: true,
@@ -234,11 +250,30 @@ export const basicFormSchema: FormSchema[] = [
     label: '启用/领用日期',
     field: 'launchDate',
     component: 'DatePicker',
+    componentProps: {
+      valueFormat: 'YYYY-MM-DD',
+    },
   },
   {
     label: '质保期',
     field: 'warrantyStartDate',
     component: 'RangePicker',
+    componentProps: ({ formActionType }) => {
+      return {
+        valueFormat: 'YYYY-MM-DD',
+        onChange: (e: ChangeEvent) => {
+          const date1 = dayjs(e[0])
+          const date2 = dayjs(e[1])
+          const day = date2.diff(date1, 'day') // 质保总天数
+          const dayReminder = date2.diff(dayjs(), 'day') // 质保剩余天数
+          const { setFieldsValue } = formActionType
+          setFieldsValue({
+            warrantyDay: day,
+            warrantylastDay: dayReminder > 0 ? dayReminder : '已超期',
+          })
+        },
+      }
+    },
   },
   {
     label: '质保天数',
@@ -262,6 +297,7 @@ export const basicFormSchema: FormSchema[] = [
     component: 'TreeSelect',
     componentProps: {
       treeData: [],
+      fieldNames: { label: 'name', value: 'id', children: 'subList' },
     },
   },
   {
@@ -270,6 +306,7 @@ export const basicFormSchema: FormSchema[] = [
     component: 'TreeSelect',
     componentProps: {
       treeData: [],
+      fieldNames: { label: 'name', value: 'id', children: 'subList' },
     },
   },
   {
@@ -278,6 +315,7 @@ export const basicFormSchema: FormSchema[] = [
     component: 'TreeSelect',
     componentProps: {
       treeData: [],
+      fieldNames: { label: 'name', value: 'id', children: 'subList' },
     },
   },
   {
@@ -286,14 +324,31 @@ export const basicFormSchema: FormSchema[] = [
     component: 'TreeSelect',
     componentProps: {
       treeData: [],
+      fieldNames: { label: 'name', value: 'id', children: 'subList' },
     },
   },
   {
     label: '责任人',
     field: 'responsible',
-    component: 'Select',
-    componentProps: {
-      options: [],
+    component: 'ApiSelect',
+    componentProps: ({ formActionType }) => {
+      return {
+        api: apiGetEmployeeList,
+        params: {
+          pageSize: 100,
+          pageIndex: 1,
+        },
+        labelField: 'realName',
+        valueField: 'id',
+        resultField: 'list',
+        onChange: async (e: ChangeEvent) => {
+          const { setFieldsValue } = formActionType
+          const employee = await apiGetEmployeeInfo({ id: e })
+          setFieldsValue({
+            responsibleJobNumber: employee.jobNumber,
+          })
+        },
+      }
     },
   },
   {
@@ -311,6 +366,7 @@ export const basicFormSchema: FormSchema[] = [
     componentProps: {
       disabled: true,
     },
+    defaultValue: userInfo.realName,
   },
   {
     label: '创建人工号',
@@ -319,6 +375,7 @@ export const basicFormSchema: FormSchema[] = [
     componentProps: {
       disabled: true,
     },
+    defaultValue: userInfo.realName,
   },
   {
     label: '实物状态',
@@ -409,5 +466,22 @@ export const priceFormSchema: FormSchema[] = [
     label: '建卡日期',
     field: 'cardCreateDate',
     component: 'DatePicker',
+  },
+]
+
+export const columnsPart: BasicColumn[] = [
+  {
+    title: '组件编码',
+    dataIndex: 'code',
+  },
+  {
+    title: '组件名称',
+    dataIndex: 'name',
+  },
+  {
+    title: '数量',
+    dataIndex: 'amount',
+    edit: true,
+    editable: true,
   },
 ]
