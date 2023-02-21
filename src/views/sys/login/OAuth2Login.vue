@@ -14,7 +14,7 @@
   // import { getToken } from '/@/utils/auth'
 
   const isOAuth = ref<boolean>(isOAuth2AppEnv())
-  const env = ref<any>({ thirdApp: true, wxWork: false, dingtalk: false })
+  const env = ref<any>({ thirdApp: false, wxWork: false, dingtalk: false })
   const { currentRoute } = useRouter()
   const route = currentRoute.value
   if (!isOAuth2AppEnv()) {

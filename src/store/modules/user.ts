@@ -16,13 +16,14 @@ import { GetUserInfoModel, LoginParams } from '/@/api/sys/model/userModel'
 import { doLogout, getUserInfo, loginApi, thirdLogin } from '/@/api/sys/user'
 import { useI18n } from '/@/hooks/web/useI18n'
 import { useMessage } from '/@/hooks/web/useMessage'
+import { useGlobSetting } from '/@/hooks/setting'
 import { router } from '/@/router'
 import { usePermissionStore } from '/@/store/modules/permission'
 import { RouteRecordRaw } from 'vue-router'
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic'
 import { isArray } from '/@/utils/is'
 import { h } from 'vue'
-
+import { useSso } from '/@/hooks/web/useSso'
 interface UserState {
   userInfo: Nullable<UserInfo>
   token?: string
@@ -174,7 +175,14 @@ export const useUserStore = defineStore({
       this.setToken(undefined)
       this.setSessionTimeout(false)
       this.setUserInfo(null)
-      goLogin && router.push(PageEnum.OAUTH2_LOGIN_PAGE_PATH)
+
+      //如果开启单点登录,则跳转到单点统一登录中心
+      const openSso = useGlobSetting().openSso
+      if (openSso == 'true') {
+        await useSso().ssoLoginOut()
+      }
+
+      goLogin && router.push(PageEnum.BASE_LOGIN)
     },
 
     /**

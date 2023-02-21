@@ -17,6 +17,8 @@ enum Api {
   TestRetry = '/testRetry',
   thirdLogin = '/sys/thirdLogin/getLoginUser',
   GetUserList = '/user/list',
+  //SSO登录校验
+  validateCasLogin = '/oauth/token',
 }
 
 /**
@@ -79,6 +81,16 @@ export function thirdLogin(params, mode: ErrorMessageMode = 'modal') {
   )
 }
 
+/**
+ * SSO登录校验
+ */
+export async function validateCasLogin(params) {
+  const url = Api.validateCasLogin
+  return otherHttp.get({
+    url,
+    params,
+  })
+}
 /**
  * 保存或者更新
  */

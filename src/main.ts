@@ -11,6 +11,7 @@ import { router, setupRouter } from '/@/router'
 import { setupRouterGuard } from '/@/router/guard'
 import { setupStore } from '/@/store'
 import { setupGlobDirectives } from '/@/directives'
+import { useSso } from '/@/hooks/web/useSso'
 import { setupI18n } from '/@/locales/setupI18n'
 import { registerGlobComp } from '/@/components/registerGlobComp'
 
@@ -39,6 +40,8 @@ async function bootstrap() {
   // 注册全局组件
   registerGlobComp(app)
 
+  //CAS单点登录
+  await useSso().ssoLogin()
   // Multilingual configuration
   // 多语言配置
   // Asynchronous case: language files may be obtained from the server side
@@ -59,8 +62,8 @@ async function bootstrap() {
 
   // Configure global error handling
 
-  // https://next.router.vuejs.org/api/#isready
-  // await router.isReady();
+  // 当路由准备好时再执行挂载( https://next.router.vuejs.org/api/#isready)
+  await router.isReady()
 
   app.mount('#app')
 }

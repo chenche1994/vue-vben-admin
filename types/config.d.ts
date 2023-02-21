@@ -147,6 +147,7 @@ export interface GlobConfig {
   domainUrl?: string
 
   casBaseUrl?: string
+  openSso?: string
 }
 export interface GlobEnvConfig {
   // Site title
@@ -164,4 +165,5 @@ export interface GlobEnvConfig {
 
   // 单点登录路径
   VITE_GLOB_APP_CAS_BASE_URL?: string
+  VITE_GLOB_APP_OPEN_SSO?: string
 }
