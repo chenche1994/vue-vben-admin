@@ -145,6 +145,8 @@ export interface GlobConfig {
   shortName: string
 
   domainUrl?: string
+
+  casBaseUrl?: string
 }
 export interface GlobEnvConfig {
   // Site title
@@ -159,4 +161,7 @@ export interface GlobEnvConfig {
   VITE_GLOB_UPLOAD_URL?: string
 
   VITE_GLOB_DOMAIN_URL?: string
+
+  // 单点登录路径
+  VITE_GLOB_APP_CAS_BASE_URL?: string
 }
