@@ -15,6 +15,7 @@
           >导入</a-button
         >
       </a-upload>
+      <a-button @click="onDelete">删除</a-button>
       <template v-if="checkedKeys.length > 0">
         <a-dropdown>
           <template #overlay>
@@ -48,42 +49,16 @@
       <template v-if="treeData.length > 0">
         <a-tree
           v-if="!treeReloading"
-          checkable
           :clickRowToExpand="false"
           :treeData="treeData"
           :selectedKeys="selectedKeys"
           :checkStrictly="checkStrictly"
           :checkedKeys="checkedKeys"
-          :fieldNames="{ key: 'id', title: 'name', children: 'subList' }"
+          :fieldNames="{ key: 'uid', title: 'name', children: 'subList' }"
           v-model:expandedKeys="expandedKeys"
           @check="onCheck"
           @select="onSelect"
-        >
-          <template #title="{ key: treeKey, name, dataRef }">
-            <a-dropdown :trigger="['contextmenu']">
-              <Popconfirm
-                :visible="visibleTreeKey === treeKey"
-                title="确定要删除吗？"
-                ok-text="确定"
-                cancel-text="取消"
-                placement="rightTop"
-                @confirm="onDelete(dataRef)"
-                @visible-change="onVisibleChange"
-              >
-                <span>{{ name }}</span>
-              </Popconfirm>
-
-              <template #overlay>
-                <a-menu>
-                  <a-menu-item key="1" @click="onAddChildDepart(dataRef)">添加子级</a-menu-item>
-                  <a-menu-item key="2" @click="visibleTreeKey = treeKey">
-                    <span style="color: red">删除</span>
-                  </a-menu-item>
-                </a-menu>
-              </template>
-            </a-dropdown>
-          </template>
-        </a-tree>
+        />
       </template>
       <a-empty v-else description="暂无数据" />
     </a-spin>
@@ -104,10 +79,10 @@
   import { nextTick, ref, unref, defineExpose, watch } from 'vue'
   import { useModal } from '/@/components/Modal'
   import { useMessage } from '/@/hooks/web/useMessage'
-  import { apiGetOrgTree, apiDelOrg } from '/@/api/sys/org'
+  import { apiGetOrgDutyTree, apiDelOrg, apiDelPost } from '/@/api'
   import DepartFormModal from './DepartFormModal.vue'
   import PostFormModal from './PostFormModal.vue'
-  import { Popconfirm } from 'ant-design-vue'
+  import { orgCategory } from '../dept.data'
 
   const emit = defineEmits(['select', 'rootTreeData'])
   const { createMessage } = useMessage()
@@ -128,8 +103,7 @@
   const checkStrictly = ref<boolean>(true)
   // 当前选中的部门
   const currentDepart = ref<any>(null)
-  // 控制确认删除提示框是否显示
-  const visibleTreeKey = ref<any>(null)
+
   // 搜索关键字
   const searchKeyword = ref('')
 
@@ -169,7 +143,7 @@
     try {
       loading.value = true
       treeData.value = []
-      const result = await apiGetOrgTree()
+      const result = await apiGetOrgDutyTree()
       if (Array.isArray(result)) {
         treeData.value = result
       } else {
@@ -182,7 +156,7 @@
           let item = treeData.value[0]
           if (item) {
             // 默认选中第一个
-            setSelectedKey(item.id, item)
+            setSelectedKey(item.uid, item)
           }
         } else {
           emit('select', currentDepart.value)
@@ -201,10 +175,10 @@
     let item = treeData.value[0]
     if (item) {
       if (!item.isLeaf) {
-        expandedKeys.value = [item.id]
+        expandedKeys.value = [item.uid]
       }
       // 默认选中第一个
-      setSelectedKey(item.id, item)
+      setSelectedKey(item.uid, item)
       reloadTree()
     } else {
       emit('select', null)
@@ -241,7 +215,7 @@
       createMessage.warning('请先选择一个部门')
       return
     }
-    const record = { parentId: data.id }
+    const record = { parentId: data.uid }
     openModal(true, { isUpdate: false, isChild: true, record })
   }
 
@@ -265,7 +239,6 @@
 
   // 树选择事件
   function onSelect(selKeys, event) {
-    console.log('select: ', selKeys, event)
     if (selKeys.length > 0 && selectedKeys.value[0] !== selKeys[0]) {
       setSelectedKey(selKeys[0], event.selectedNodes[0])
     } else {
@@ -284,7 +257,14 @@
     if (idList.length > 0) {
       try {
         loading.value = true
-        await apiDelOrg({ idList: idList }, confirm)
+        const orgIdList = idList.filter((v) => v.indexOf('O'))
+        const dutyIdList = idList.filter((v) => v.indexOf('D'))
+        if (orgIdList) {
+          await apiDelOrg({ idList: orgIdList }, confirm)
+        }
+        if (dutyIdList.length) {
+          await apiDelPost({ idList: dutyIdList }, confirm)
+        }
         await loadRootTreeData()
       } finally {
         loading.value = false
@@ -293,10 +273,19 @@
   }
 
   // 删除单个部门
-  async function onDelete(data) {
-    if (data) {
-      onVisibleChange(false)
-      doDeleteDepart(data.id, false)
+  async function onDelete() {
+    try {
+      loading.value = true
+      const api = currentDepart.value?.type === orgCategory.ORGANIZATION ? apiDelOrg : apiDelPost
+      const params =
+        currentDepart.value?.type === orgCategory.ORGANIZATION
+          ? { idList: [currentDepart.value.id] }
+          : { id: currentDepart.value.id }
+      await api(params)
+      selectedKeys.value = []
+      await loadRootTreeData()
+    } finally {
+      loading.value = false
     }
   }
 
@@ -306,12 +295,6 @@
       await doDeleteDepart(checkedKeys)
       checkedKeys.value = []
     } finally {
-    }
-  }
-
-  function onVisibleChange(visible) {
-    if (!visible) {
-      visibleTreeKey.value = null
     }
   }
 

@@ -22,7 +22,7 @@
   const title = computed(() => (isUpdate.value ? '编辑' : '新增'))
   const rowId = ref('')
   // 注册抽屉
-  const [registerModel, { closeModel, setModalProps }] = useModalInner(async (data) => {
+  const [registerModel, { closeModal, setModalProps }] = useModalInner(async (data) => {
     resetFields()
     setModalProps({ confirmLoading: false })
     isUpdate.value = !!data?.isUpdate
@@ -52,7 +52,7 @@
       let values = await validate()
       //提交表单
       await saveOrUpdateSpecialty({ ...values, id: rowId.value }, isUpdate.value)
-      closeModel() // 关闭表单
+      closeModal() // 关闭表单
       emit('success')
     } finally {
       setModalProps({ confirmLoading: false })

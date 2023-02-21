@@ -1,12 +1,16 @@
 import { FormSchema } from '/@/components/Form'
 import { apiGetUserList, apiGetOrgTree, apiGetSpecialty } from '/@/api'
 
+export enum orgCategory {
+  ORGANIZATION = 'ORGANIZATION',
+  DUTY = 'DUTY',
+}
 // 部门基础表单
-export function useBasicFormSchema() {
+export function useBasicFormSchema(type = orgCategory.ORGANIZATION) {
   const basicFormSchema: FormSchema[] = [
     {
       field: 'name',
-      label: '部门名称',
+      label: '名称',
       component: 'Input',
       rules: [{ required: true, message: '机构名称不能为空' }],
     },
@@ -22,17 +26,25 @@ export function useBasicFormSchema() {
       },
     },
     {
+      field: 'type',
+      label: '类型',
+      component: 'RadioButtonGroup',
+      componentProps: {
+        options: [
+          { value: 'ORGANIZATION', label: '部门' },
+          { value: 'DUTY', label: '岗位' },
+        ],
+      },
+    },
+    {
       field: 'specialtyId',
       label: '专业',
       component: 'ApiTreeSelect',
       componentProps: {
         api: apiGetSpecialty,
-        labelField: 'deptName',
-        valueField: 'id',
-        isLeaf: (item) => {
-          return !item.children
-        },
+        fieldNames: { label: 'name', value: 'id', children: 'subList' },
       },
+      show: type === orgCategory.ORGANIZATION,
     },
     {
       field: 'charger',
@@ -41,21 +53,25 @@ export function useBasicFormSchema() {
       componentProps: {
         api: apiGetUserList,
       },
+      show: type === orgCategory.ORGANIZATION,
     },
     {
       field: 'mobile',
       label: '电话',
       component: 'Input',
+      show: type === orgCategory.ORGANIZATION,
     },
     {
-      field: 'fax',
-      label: '传真',
+      field: 'email',
+      label: '邮箱',
       component: 'Input',
+      show: type === orgCategory.ORGANIZATION,
     },
     {
       field: 'address',
       label: '地址',
       component: 'Input',
+      show: type === orgCategory.ORGANIZATION,
     },
     {
       field: 'memo',
@@ -83,7 +99,7 @@ export const postFormSchema: FormSchema[] = [
     component: 'ApiTreeSelect',
     componentProps: {
       api: apiGetOrgTree,
-      fieldNames: { label: 'name', value: 'id' },
+      fieldNames: { label: 'name', value: 'id', children: 'subList' },
       isLeaf: (item) => {
         return !item.children
       },

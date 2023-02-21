@@ -9,6 +9,7 @@
       :treeData="treeData"
       :fieldNames="{ key: 'id', title: 'name' }"
       @select="handleSelect"
+      @reset="handleSelect([])"
     />
   </div>
 </template>

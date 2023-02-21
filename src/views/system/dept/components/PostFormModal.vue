@@ -38,7 +38,7 @@
     // 隐藏不需要展示的字段
     updateSchema([
       {
-        field: 'parentId',
+        field: 'deptId',
         componentProps: {
           // 如果是添加子部门，就禁用该字段
           treeData: props.rootTreeData,

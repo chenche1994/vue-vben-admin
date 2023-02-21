@@ -34,10 +34,7 @@
     baseColProps: { span: 24 },
     labelWidth: 120,
   })
-
   onMounted(() => {
-    // 禁用字段
-    updateSchema([{ field: 'parentId', componentProps: { disabled: true } }])
     // data 变化，重填表单
     watch(
       () => props.data,
@@ -45,6 +42,12 @@
         let record = unref(props.data)
         if (typeof record !== 'object') {
           record = {}
+        }
+        if (!!props?.data?.type) {
+          const schemas = useBasicFormSchema(props.data.type).basicFormSchema.filter((v) =>
+            Reflect.has(v, 'show'),
+          )
+          updateSchema(schemas)
         }
         model.value = record
         await resetFields()

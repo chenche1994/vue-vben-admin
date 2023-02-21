@@ -1,6 +1,6 @@
 <template>
   <PageWrapper dense contentFullHeight contentClass="flex">
-    <DeptTree class="m-4 mr-0 w-1/4 xl:w-1/5" />
+    <DeptTree class="m-4 mr-0 w-1/4 xl:w-1/5" @select="onSelectDept" />
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5">
       <template #toolbar>
         <a-button type="primary" @click="handleCreate">新增员工</a-button>
@@ -37,7 +37,7 @@
   import { columns, searchFormSchema } from './employee.data'
   import { useDrawer } from '/@/components/Drawer'
   // 注册表格
-  const [registerTable, { reload }] = useTable({
+  const [registerTable, { reload, setProps }] = useTable({
     title: '员工列表',
     api: apiGetEmployeeList,
     columns,
@@ -77,6 +77,11 @@
     openDrawer(true, {
       isUpdate: false,
     })
+  }
+  // 点击部门刷新表格
+  function onSelectDept(deptId) {
+    setProps({ searchInfo: { deptId } })
+    reload()
   }
   // 刷新表格
   function handleSuccess() {
