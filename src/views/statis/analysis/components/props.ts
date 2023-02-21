@@ -13,4 +13,13 @@ export const basicProps = {
     type: String as PropType<string>,
     default: '280px',
   },
+  loading: {
+    type: Boolean,
+  },
+  option: {
+    type: Object,
+  },
+  title: {
+    type: String,
+  },
 }
