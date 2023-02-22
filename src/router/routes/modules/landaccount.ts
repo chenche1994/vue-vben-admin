@@ -15,6 +15,22 @@ const landAccount: AppRouteModule = {
   children: [
     {
       path: 'index',
+      name: 'FormList',
+      component: () => import('/@/views/landAccount/formList/index.vue'),
+      meta: {
+        title: '工单列表',
+      },
+    },
+    {
+      path: 'repairSchedule',
+      name: 'RepairSchedule',
+      component: () => import('/@/views/landAccount/repairSchedule/index.vue'),
+      meta: {
+        title: '检修计划',
+      },
+    },
+    {
+      path: 'asset',
       name: 'Asset',
       component: () => import('/@/views/landAccount/asset/index.vue'),
       meta: {

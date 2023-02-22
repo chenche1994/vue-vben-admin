@@ -76,13 +76,13 @@ export const searchFormSchema: FormSchema[] = [
         },
       ],
     },
-    colProps: { span: 8 },
+    colProps: { xs: 24, sm: 12, md: 10, lg: 10, xl: 6, xxl: 6 },
     defaultValue: 'all',
   },
   {
     field: 'reportTime',
     label: '提报时间',
     component: 'RangePicker',
-    colProps: { span: 8 },
+    colProps: { xs: 24, sm: 12, md: 10, lg: 10, xl: 6, xxl: 6 },
   },
 ]
