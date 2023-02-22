@@ -215,7 +215,7 @@
       createMessage.warning('请先选择一个部门')
       return
     }
-    const record = { parentId: data.uid }
+    const record = { parentId: data.id }
     openModal(true, { isUpdate: false, isChild: true, record })
   }
 

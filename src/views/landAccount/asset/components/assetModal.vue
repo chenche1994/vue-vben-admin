@@ -186,6 +186,7 @@
           ...valuesPrice,
           id: rowId.value,
           creator: userInfo.id,
+          creatorJobNumber: 'J001',
           parts: parts.value.map((v) => ({ componentId: v.id, amount: v.amount })),
         },
         isUpdate.value,

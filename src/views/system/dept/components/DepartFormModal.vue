@@ -58,14 +58,9 @@
     if (typeof record !== 'object') {
       record = {}
     }
-    // 赋默认值
-    record = Object.assign(
-      {
-        departOrder: 0,
-      },
-      record,
-    )
     model.value = record
+    console.log(props.rootTreeData)
+
     await setFieldsValue({ ...record })
   })
 

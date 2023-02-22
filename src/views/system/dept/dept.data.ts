@@ -21,7 +21,7 @@ export function useBasicFormSchema(type = orgCategory.ORGANIZATION) {
       componentProps: {
         treeData: [],
         placeholder: '无',
-        fieldNames: { label: 'name', value: 'id' },
+        fieldNames: { label: 'name', value: 'id', children: 'subList' },
         dropdownStyle: { maxHeight: '200px', overflow: 'auto' },
       },
     },

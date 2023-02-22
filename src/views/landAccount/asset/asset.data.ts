@@ -438,7 +438,7 @@ export const priceFormSchema: FormSchema[] = [
       labelField: 'name',
       valueField: 'name',
       params: {
-        parameter: 'depreciationStatus',
+        parameter: 'depreciationMethod',
       },
     },
   },

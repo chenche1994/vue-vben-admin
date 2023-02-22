@@ -39,15 +39,14 @@ async function bootstrap() {
   // Register global components
   // 注册全局组件
   registerGlobComp(app)
-
-  //CAS单点登录
-  await useSso().ssoLogin()
   // Multilingual configuration
   // 多语言配置
   // Asynchronous case: language files may be obtained from the server side
   // 异步案例：语言文件可能从服务器端获取
   await setupI18n(app)
 
+  //CAS单点登录
+  await useSso().ssoLogin()
   // Configure routing
   // 配置路由
   setupRouter(app)
