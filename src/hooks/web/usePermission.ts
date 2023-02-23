@@ -10,7 +10,7 @@ import { router, resetRouter } from '/@/router'
 // import { RootRoute } from '/@/router/routes';
 
 import projectSetting from '/@/settings/projectSetting'
-import { PermissionModeEnum } from '/@/enums/appEnum'
+import { PermissionModeEnum, MicrosEnum } from '/@/enums/appEnum'
 import { RoleEnum } from '/@/enums/roleEnum'
 
 import { intersection } from 'lodash-es'
@@ -37,6 +37,11 @@ export function usePermission() {
     location.reload()
   }
 
+  // 切换应用
+  async function toggleMicro(micro: MicrosEnum) {
+    appStore.setProjectConfig({ micro }, true)
+    location.reload()
+  }
   /**
    * Reset and regain authority resource information
    * 重置和重新获得权限资源信息
@@ -107,5 +112,5 @@ export function usePermission() {
     resume()
   }
 
-  return { changeRole, hasPermission, togglePermissionMode, refreshMenu }
+  return { changeRole, hasPermission, togglePermissionMode, refreshMenu, toggleMicro }
 }

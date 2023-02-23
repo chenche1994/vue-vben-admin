@@ -10,7 +10,7 @@ import type { BeforeMiniState } from '/#/store'
 import { defineStore } from 'pinia'
 import { store } from '/@/store'
 
-import { ThemeEnum } from '/@/enums/appEnum'
+import { ThemeEnum, MicrosEnum } from '/@/enums/appEnum'
 import { APP_DARK_MODE_KEY_, PROJ_CFG_KEY } from '/@/enums/cacheEnum'
 import { Persistent } from '/@/utils/cache/persistent'
 import { darkMode } from '/@/settings/designSetting'
@@ -47,6 +47,10 @@ export const useAppStore = defineStore({
       return this.beforeMiniInfo
     },
 
+    getMicro(): MicrosEnum {
+      return this.getProjectConfig.micro || MicrosEnum.SAFTY
+    },
+
     getProjectConfig(): ProjectConfig {
       return this.projectConfig || ({} as ProjectConfig)
     },
@@ -78,9 +82,9 @@ export const useAppStore = defineStore({
       this.beforeMiniInfo = state
     },
 
-    setProjectConfig(config: DeepPartial<ProjectConfig>): void {
+    setProjectConfig(config: DeepPartial<ProjectConfig>, immediate = false): void {
       this.projectConfig = deepMerge(this.projectConfig || {}, config)
-      Persistent.setLocal(PROJ_CFG_KEY, this.projectConfig)
+      Persistent.setLocal(PROJ_CFG_KEY, this.projectConfig, immediate)
     },
 
     async resetAllState() {

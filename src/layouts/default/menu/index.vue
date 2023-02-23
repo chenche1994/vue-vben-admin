@@ -2,8 +2,9 @@
   import type { PropType, CSSProperties } from 'vue'
 
   import { computed, defineComponent, unref, toRef } from 'vue'
-  import { BasicMenu } from '/@/components/Menu'
+  // import { BasicMenu } from '/@/components/Menu'
   import { SimpleMenu } from '/@/components/SimpleMenu'
+  import MicroMenu from './MicroMenu.vue'
   import { AppLogo } from '/@/components/Application'
 
   import { MenuModeEnum, MenuSplitTyeEnum } from '/@/enums/menuEnum'
@@ -19,7 +20,7 @@
   import { useRootSetting } from '/@/hooks/setting/useRootSetting'
   import { useAppInject } from '/@/hooks/web/useAppInject'
   import { useDesign } from '/@/hooks/web/useDesign'
-
+  import { microsMenu } from './micros'
   export default defineComponent({
     name: 'LayoutMenu',
     props: {
@@ -55,7 +56,9 @@
 
       const { prefixCls } = useDesign('layout-menu')
 
-      const { menusRef } = useSplitMenu(toRef(props, 'splitType'))
+      const { menusRef } = unref(!props.isHorizontal)
+        ? useSplitMenu(toRef(props, 'splitType'))
+        : microsMenu
 
       const { getIsMobile } = useAppInject()
 
@@ -65,7 +68,8 @@
 
       const getComputedMenuTheme = computed(() => props.theme || unref(getMenuTheme))
 
-      const getIsShowLogo = computed(() => unref(getShowLogo) && unref(getIsSidebarType))
+      const getIsShowLogo =
+        computed(() => unref(getShowLogo) && unref(getIsSidebarType)) && unref(!props.isHorizontal)
 
       const getUseScroll = computed(() => {
         return (
@@ -145,7 +149,7 @@
         return !props.isHorizontal ? (
           <SimpleMenu {...menuProps} isSplitMenu={unref(getSplit)} items={menus} />
         ) : (
-          <BasicMenu
+          <MicroMenu
             {...(menuProps as any)}
             isHorizontal={props.isHorizontal}
             type={unref(getMenuType)}

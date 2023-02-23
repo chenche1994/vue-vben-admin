@@ -21,13 +21,8 @@
     <!-- left end -->
 
     <!-- menu start -->
-    <div :class="`${prefixCls}-menu`" v-if="getShowTopMenu && !getIsMobile">
-      <LayoutMenu
-        :isHorizontal="true"
-        :theme="getHeaderTheme"
-        :splitType="getSplitType"
-        :menuMode="getMenuMode"
-      />
+    <div :class="`${prefixCls}-menu`">
+      <LayoutMenu :isHorizontal="true" :theme="getHeaderTheme" v-bind="getEnumTop" />
     </div>
     <!-- menu-end -->
 
@@ -156,6 +151,9 @@
         return unref(getSplit) ? MenuSplitTyeEnum.TOP : MenuSplitTyeEnum.NONE
       })
 
+      const getEnumTop = computed(() => {
+        return { splitType: MenuSplitTyeEnum.TOP, menuMode: MenuModeEnum.HORIZONTAL }
+      })
       const getMenuMode = computed(() => {
         return unref(getSplit) ? MenuModeEnum.HORIZONTAL : null
       })
@@ -181,6 +179,7 @@
         getIsMixSidebar,
         getShowSettingButton,
         getShowSetting,
+        getEnumTop,
       }
     },
   })

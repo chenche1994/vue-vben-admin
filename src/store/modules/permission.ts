@@ -11,9 +11,9 @@ import { transformRouteToMenu } from '/@/router/helper/menuHelper'
 
 import projectSetting from '/@/settings/projectSetting'
 
-import { PermissionModeEnum } from '/@/enums/appEnum'
+import { PermissionModeEnum, MicrosEnum } from '/@/enums/appEnum'
 
-import { asyncRoutes } from '/@/router/routes'
+import { asyncRoutes, asyncRoutesRobot } from '/@/router/routes'
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic'
 
 import { filter } from '/@/utils/helper/treeHelper'
@@ -117,7 +117,8 @@ export const usePermissionStore = defineStore({
       let routes: AppRouteRecordRaw[] = []
       const roleList = toRaw(userStore.getRoleList) || []
       const { permissionMode = projectSetting.permissionMode } = appStore.getProjectConfig
-
+      const micro = appStore.getMicro
+      const microRoute = micro === MicrosEnum.SAFTY ? asyncRoutes : asyncRoutesRobot
       // 路由过滤器 在 函数filter 作为回调传入遍历使用
       const routeFilter = (route: AppRouteRecordRaw) => {
         const { meta } = route
@@ -171,7 +172,7 @@ export const usePermissionStore = defineStore({
         // 角色权限
         case PermissionModeEnum.ROLE:
           // 对非一级路由进行过滤
-          routes = filter(asyncRoutes, routeFilter)
+          routes = filter(microRoute, routeFilter)
           // 对一级路由根据角色权限过滤
           routes = routes.filter(routeFilter)
           // Convert multi-level routing to level 2 routing
@@ -182,7 +183,7 @@ export const usePermissionStore = defineStore({
         // 路由映射， 默认进入该case
         case PermissionModeEnum.ROUTE_MAPPING:
           // 对非一级路由进行过滤
-          routes = filter(asyncRoutes, routeFilter)
+          routes = filter(microRoute, routeFilter)
           // 对一级路由再次根据角色权限过滤
           routes = routes.filter(routeFilter)
           // 将路由转换成菜单

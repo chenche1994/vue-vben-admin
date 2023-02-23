@@ -130,7 +130,7 @@ export function isOAuth2AppEnv() {
  */
 export function sysOAuth2Login(source) {
   const url =
-    'http://172.16.131.194:8088/oauth/authorize?client_id=tpm&response_type=code&redirect_uri=https://localhost:3100/#/'
+    'http://172.16.131.194:8080/oauth/authorize?client_id=tpm&response_type=code&redirect_uri=https://localhost:3100/#/'
   // url += `?state=${encodeURIComponent(window.location.origin)}`
   window.location.href = url
   console.log(source)

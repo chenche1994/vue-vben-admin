@@ -6,8 +6,8 @@ import {
   RouterTransitionEnum,
   SettingButtonPositionEnum,
   SessionTimeoutProcessingEnum,
+  MicrosEnum,
 } from '/@/enums/appEnum'
-
 import { CacheTypeEnum } from '/@/enums/cacheEnum'
 
 export type LocaleType = 'zh_CN' | 'en' | 'ru' | 'ja' | 'ko'
@@ -130,6 +130,8 @@ export interface ProjectConfig {
   closeMessageOnSwitch: boolean
   // Whether to cancel the http request that has been sent but not responded when switching the interface.
   removeAllHttpPending: boolean
+
+  micro: MicrosEnum //应用
 }
 
 export interface GlobConfig {

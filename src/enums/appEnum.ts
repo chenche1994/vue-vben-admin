@@ -50,3 +50,9 @@ export enum RouterTransitionEnum {
   FADE_BOTTOM = 'fade-bottom',
   FADE_SCALE = 'fade-scale',
 }
+
+// 应用菜单
+export enum MicrosEnum {
+  SAFTY = 'SAFTY', // 设施设备维护
+  ROBOT = 'ROBOT', // 机器人平台
+}
