@@ -2,11 +2,11 @@ import type { AppRouteModule } from '/@/router/types'
 
 import { LAYOUT } from '/@/router/constant'
 
-const statis: AppRouteModule = {
-  path: '/statis',
-  name: 'Statis',
+const robotStatis: AppRouteModule = {
+  path: '/robot/statis',
+  name: 'RobotStatis',
   component: LAYOUT,
-  redirect: '/statis/index',
+  redirect: '/robot/statis/index',
   meta: {
     hideChildrenInMenu: true,
     orderNo: 300,
@@ -16,7 +16,7 @@ const statis: AppRouteModule = {
   children: [
     {
       path: 'index',
-      name: 'StatIndex',
+      name: 'RobotStatIndex',
       component: () => import('/@/views/statis/analysis/index.vue'),
       meta: {
         title: '统计分析',
@@ -25,4 +25,4 @@ const statis: AppRouteModule = {
   ],
 }
 
-export default statis
+export default robotStatis

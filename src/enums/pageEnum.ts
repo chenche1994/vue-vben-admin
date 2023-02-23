@@ -3,6 +3,8 @@ export enum PageEnum {
   BASE_LOGIN = '/login',
   // basic home path
   BASE_HOME = '/home',
+  // robot home
+  ROBOT_BASE_HOME = '/robot/statis',
   // error page path
   ERROR_PAGE = '/exception',
   // error log page path

@@ -24,6 +24,8 @@ import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic'
 import { isArray } from '/@/utils/is'
 import { h } from 'vue'
 import { useSso } from '/@/hooks/web/useSso'
+
+import { deepMerge } from '/@/utils'
 interface UserState {
   userInfo: Nullable<UserInfo>
   token?: string
@@ -90,6 +92,10 @@ export const useUserStore = defineStore({
       this.lastUpdateTime = new Date().getTime()
       setAuthCache(USER_INFO_KEY, info)
     },
+    setHomePath(config: object) {
+      this.userInfo = deepMerge(this.userInfo || {}, config)
+      setAuthCache(USER_INFO_KEY, this.userInfo)
+    },
     setLoginInfo(info: LoginInfo | null) {
       this.loginInfo = info
       setAuthCache(LOGIN_INFO_KEY, info)
@@ -149,7 +155,7 @@ export const useUserStore = defineStore({
     },
     async getUserInfoAction(): Promise<UserInfo | null> {
       if (!this.getToken) return null
-      const userInfo = await getUserInfo()
+      let userInfo = await getUserInfo()
       const { roleList: roles = [] } = userInfo
       if (isArray(roles)) {
         const roleList = roles.map((item) => item.value) as RoleEnum[]
@@ -157,6 +163,9 @@ export const useUserStore = defineStore({
       } else {
         userInfo.roleList = []
         this.setRoleList([])
+      }
+      if (!userInfo.homePath) {
+        userInfo = deepMerge(userInfo || {}, { homePath: this.getUserInfo.homePath })
       }
       this.setUserInfo(userInfo)
       return userInfo

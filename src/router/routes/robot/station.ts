@@ -2,27 +2,27 @@ import type { AppRouteModule } from '/@/router/types'
 
 import { LAYOUT } from '/@/router/constant'
 
-const statis: AppRouteModule = {
-  path: '/statis',
-  name: 'Statis',
+const station: AppRouteModule = {
+  path: '/robot/station',
+  name: 'RobotStation',
   component: LAYOUT,
-  redirect: '/statis/index',
+  redirect: '/robot/station/index',
   meta: {
     hideChildrenInMenu: true,
     orderNo: 300,
     icon: 'ant-design:bar-chart-outline',
-    title: '统计分析',
+    title: '场站信息',
   },
   children: [
     {
       path: 'index',
-      name: 'StatIndex',
+      name: 'RobotStationIndex',
       component: () => import('/@/views/statis/analysis/index.vue'),
       meta: {
-        title: '统计分析',
+        title: '场站信息',
       },
     },
   ],
 }
 
-export default statis
+export default station

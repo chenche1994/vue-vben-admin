@@ -17,6 +17,9 @@ import { intersection } from 'lodash-es'
 import { isArray } from '/@/utils/is'
 import { useMultipleTabStore } from '/@/store/modules/multipleTab'
 
+import { PageEnum } from '/@/enums/pageEnum'
+import { useGo } from '/@/hooks/web/usePage'
+
 // User permissions related operations
 export function usePermission() {
   const userStore = useUserStore()
@@ -39,7 +42,11 @@ export function usePermission() {
 
   // 切换应用
   async function toggleMicro(micro: MicrosEnum) {
+    const go = useGo(router)
     appStore.setProjectConfig({ micro }, true)
+    const homePath = micro === MicrosEnum.SAFTY ? PageEnum.BASE_HOME : PageEnum.ROBOT_BASE_HOME
+    userStore.setHomePath({ homePath })
+    go('/login')
     location.reload()
   }
   /**

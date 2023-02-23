@@ -48,9 +48,11 @@
 
       async function handleMenuClick(key) {
         // menuState.selectedKeys = [key]
-        selectedKeys.value = [key.key]
-        const { toggleMicro } = usePermission()
-        toggleMicro(key.key)
+        if (appStore.getMicro !== key.key) {
+          selectedKeys.value = [key.key]
+          const { toggleMicro } = usePermission()
+          toggleMicro(key.key)
+        }
       }
 
       return {
